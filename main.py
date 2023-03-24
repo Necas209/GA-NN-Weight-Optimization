@@ -1,3 +1,4 @@
+import math
 import random
 
 from dataclasses import dataclass, field
@@ -8,8 +9,8 @@ class GeneticAlgorithm:
     counter: int = 0
     max_gen: int = 200
     pop_size: int = 100
-    pm: float = 0.2
-    pc: float = 0.9
+    prob_mut: float = 0.2
+    prob_cross: float = 0.9
     npar: int = 2
     nbits: int = 8
     lchrome: int = npar * nbits
@@ -35,7 +36,13 @@ class GeneticAlgorithm:
     def print_pop(self) -> None:
         for i, chrome in enumerate(self.pop):
             bit_str = ''.join(map(str, chrome))
-            print(f'{i}: {bit_str} {self.decode(chrome, 0)} {self.decode(chrome, 1)}')
+            print(
+                f'{i}: {bit_str} ({self.decode(chrome, 0)}, {self.decode(chrome, 1)}) fitness: {self.fitness(chrome)}')
+
+    def fitness(self, chrome: list[int]) -> float:
+        x = self.decode(chrome, 0)
+        y = self.decode(chrome, 1)
+        return 11 - (math.pi * x ** 3 * y - 0.1) ** 2
 
 
 def main() -> None:
