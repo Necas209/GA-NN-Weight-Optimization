@@ -1,4 +1,5 @@
 import random
+
 from dataclasses import dataclass, field
 
 
@@ -28,12 +29,20 @@ class GeneticAlgorithm:
     def decode(self, chrome: list[int], i: int) -> float:
         start = i * self.nbits
         end = start + self.nbits
-        return self.vmin[i] + (self.vmax[i] - self.vmin[i]) * sum(chrome[start:end]) / self.max_bits
+        return self.vmin[i] + (self.vmax[i] - self.vmin[i]) * int(''.join(map(str, chrome[start:end])),
+                                                                  2) / self.max_bits
+
+    def print_pop(self) -> None:
+        for i, chrome in enumerate(self.pop):
+            bit_str = ''.join(map(str, chrome))
+            print(f'{i}: {bit_str} {self.decode(chrome, 0)} {self.decode(chrome, 1)}')
 
 
 def main() -> None:
     ga = GeneticAlgorithm(pop_size=20)
     print(ga.random_chrome())
+    ga.print_pop()
+    print(ga.decode(ga.pop[0], 0))
 
 
 if __name__ == '__main__':
