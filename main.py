@@ -2,7 +2,13 @@ from genalg import GeneticAlgorithm
 
 
 def main() -> None:
-    ga = GeneticAlgorithm(pop_size=20)
+    ga = GeneticAlgorithm(
+        pop_size=300,
+        max_gen=1000,
+        prob_cross=0.95,
+        prob_mut=0.05,
+    )
+    """
     ga.print_pop()
     print(ga.decode(ga.pop[0], 0))
     p1, p2 = ga.pop[0], ga.pop[1]
@@ -14,6 +20,8 @@ def main() -> None:
     chrome = ga.random_chrome()
     print(f'chrome: {chrome}')
     print(f'mutated: {ga.mutate_one_point(chrome)}')
+    """
+    ga.run()
 
 
 if __name__ == '__main__':
