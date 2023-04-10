@@ -40,7 +40,10 @@ class GeneticAlgorithm:
         for i, chrome in enumerate(self.pop):
             bit_str = ''.join(map(str, chrome))
             print(
-                f'{i}: {bit_str} ({self.decode(chrome, 0)}, {self.decode(chrome, 1)}) fitness: {self.fitness(chrome)}')
+                f'{i}: {bit_str} '
+                f'({self.decode(chrome, 0)}, {self.decode(chrome, 1)}) '
+                f'fitness: {self.fitness(chrome)}'
+            )
 
     def fitness(self, chrome: Chrome) -> float:
         x = self.decode(chrome, 0)
