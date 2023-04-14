@@ -3,10 +3,8 @@ from genalg import GeneticAlgorithm
 
 def main() -> None:
     ga = GeneticAlgorithm(
-        pop_size=300,
-        max_gen=1000,
-        prob_cross=0.95,
-        prob_mut=0.05,
+        prob_mut=0.1,
+        max_gen=500,
     )
     """
     ga.print_pop()

@@ -1,4 +1,3 @@
-import math
 import random
 
 from dataclasses import dataclass, field
@@ -48,7 +47,7 @@ class GeneticAlgorithm:
     def fitness(self, chrome: Chrome) -> float:
         x = self.decode(chrome, 0)
         y = self.decode(chrome, 1)
-        return 11 - (math.pi * x ** 3 * y - 0.1) ** 2
+        return (x - 3) ** 2 + (y - 2) ** 2
 
     def two_point_cross(self, chrome1: Chrome, chrome2: Chrome) -> tuple[Chrome, Chrome]:
         random_points = random.sample(range(1, self.lchrome), 2)
@@ -146,7 +145,7 @@ class GeneticAlgorithm:
                 new_pop.append(c2)
             self.pop = new_pop
             self.counter += 1
-            if self.counter % 10 == 0:
+            if self.counter % 50 == 0:
                 print(
                     f'Gen: {self.counter} '
                     f'Best: {self.best_fitness} '
