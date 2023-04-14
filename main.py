@@ -3,8 +3,9 @@ from genalg import GeneticAlgorithm
 
 def main() -> None:
     ga = GeneticAlgorithm(
-        prob_mut=0.1,
-        max_gen=500,
+        prob_cross=0.95,
+        prob_mut=0.05,
+        max_gen=1000,
     )
     """
     ga.print_pop()
@@ -19,7 +20,7 @@ def main() -> None:
     print(f'chrome: {chrome}')
     print(f'mutated: {ga.mutate_one_point(chrome)}')
     """
-    ga.run()
+    ga.run(print_freq=20)
 
 
 if __name__ == '__main__':

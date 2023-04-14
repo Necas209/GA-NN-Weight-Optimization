@@ -16,7 +16,7 @@ class GeneticAlgorithm:
     npar: int = 2
     nbits: int = 8
     lchrome: int = npar * nbits
-    vmax: list[int] = field(default_factory=lambda: [1, 1])
+    vmax: list[int] = field(default_factory=lambda: [5, 5])
     vmin: list[int] = field(default_factory=lambda: [0, 0])
     max_bits: int = 2 ** nbits - 1
 
@@ -91,7 +91,7 @@ class GeneticAlgorithm:
         """
         Select a chromosome from the population using tournament selection
 
-        :param n: number of participants
+        :param n: number of participants. Default is 2
         :return: selected chromosome
         """
         if n > len(self.pop):
@@ -126,7 +126,7 @@ class GeneticAlgorithm:
         """
         return sum(map(self.fitness, self.pop)) / len(self.pop)
 
-    def run(self) -> None:
+    def run(self, print_freq: int = 10) -> None:
         """
         Run the genetic algorithm
         """
@@ -145,10 +145,10 @@ class GeneticAlgorithm:
                 new_pop.append(c2)
             self.pop = new_pop
             self.counter += 1
-            if self.counter % 50 == 0:
+            if self.counter % print_freq == 0:
                 print(
-                    f'Gen: {self.counter} '
-                    f'Best: {self.best_fitness} '
-                    f'Worst: {self.worst_fitness} '
-                    f'Avg: {self.avg_fitness}'
+                    f'Gen: {self.counter: >5} '
+                    f'Best: {self.best_fitness: >8.5f} '
+                    f'Worst: {self.worst_fitness: >8.5f} '
+                    f'Avg: {self.avg_fitness: >8.5f}'
                 )
