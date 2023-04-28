@@ -1,154 +1,123 @@
 import random
-
 from dataclasses import dataclass, field
 
-Chrome = list[int]
+import numpy as np
+import torch
+import torch.nn as nn
+from torch.utils import data
+
+Weights = np.ndarray[float]
+Pair = tuple[Weights, Weights]
+
+
+def avg_fitness(fitness_scores: list[float]) -> float:
+    return np.mean(fitness_scores).item()
+
+
+def best_fitness(fitness_scores: list[float]) -> float:
+    return np.max(fitness_scores)
+
+
+def worst_fitness(fitness_scores: list[float]) -> float:
+    return np.min(fitness_scores)
 
 
 @dataclass
 class GeneticAlgorithm:
-    pop: list[Chrome] = field(default_factory=list)
-    counter: int = 0
-    max_gen: int = 200
-    pop_size: int = 100
-    prob_mut: float = 0.2
-    prob_cross: float = 0.9
-    npar: int = 2
-    nbits: int = 8
-    lchrome: int = npar * nbits
-    vmax: list[int] = field(default_factory=lambda: [5, 5])
-    vmin: list[int] = field(default_factory=lambda: [0, 0])
-    max_bits: int = 2 ** nbits - 1
+    model: nn.Module
+    train_loader: data.DataLoader
+    test_loader: data.DataLoader
+    population: np.ndarray[Weights] = None
+    population_size: int = 10
+    mutation_rate: float = 0.01
+    crossover_rate: float = 0.95
+    num_generations: int = 100
+    best_solutions: list[Weights] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        self.pop = self.init_pop()
+        self.population = np.random.uniform(
+            low=-1,
+            high=1,
+            size=(self.population_size, self.num_weights)
+        )
 
-    def random_chrome(self) -> Chrome:
-        return [random.randint(0, 1) for _ in range(self.lchrome)]
-
-    def init_pop(self) -> list[Chrome]:
-        return [self.random_chrome() for _ in range(self.pop_size)]
-
-    def decode(self, chrome: Chrome, i: int) -> float:
-        start = i * self.nbits
-        end = start + self.nbits
-        return self.vmin[i] + (self.vmax[i] - self.vmin[i]) * int(''.join(map(str, chrome[start:end])),
-                                                                  2) / self.max_bits
-
-    def print_pop(self) -> None:
-        for i, chrome in enumerate(self.pop):
-            bit_str = ''.join(map(str, chrome))
-            print(
-                f'{i}: {bit_str} '
-                f'({self.decode(chrome, 0)}, {self.decode(chrome, 1)}) '
-                f'fitness: {self.fitness(chrome)}'
-            )
-
-    def fitness(self, chrome: Chrome) -> float:
-        x = self.decode(chrome, 0)
-        y = self.decode(chrome, 1)
-        return (x - 3) ** 2 + (y - 2) ** 2
-
-    def two_point_cross(self, chrome1: Chrome, chrome2: Chrome) -> tuple[Chrome, Chrome]:
-        random_points = random.sample(range(1, self.lchrome), 2)
-        p1, p2 = min(random_points), max(random_points)
-        d1 = chrome1[:p1] + chrome2[p1:p2] + chrome1[p2:]
-        d2 = chrome2[:p1] + chrome1[p1:p2] + chrome2[p2:]
-        return d1, d2
-
-    def mutate_one_point(self, chrome: Chrome) -> Chrome:
-        """
-        Mutate one point in the chromosome
-
-        :param chrome: chromosome
-        :return: mutated chromosome
-        """
-        i = random.randint(0, self.lchrome)
-        chrome[i] = 1 - chrome[i]
-        return chrome
-
-    def mutate(self, chrome: Chrome) -> Chrome:
-        """
-        Mutate the chromosome
-
-        :param chrome: chromosome
-        :return: mutated chromosome
-        """
-        for i in range(self.lchrome):
-            if random.random() < self.prob_mut:
-                chrome[i] = 1 - chrome[i]
-        return chrome
-
-    def select_chrome(self) -> Chrome:
-        """
-        Select a chromosome from the population
-
-        :return: selected chromosome
-        """
-        return random.choice(self.pop)
-
-    def tournament(self, n: int = 2) -> Chrome:
-        """
-        Select a chromosome from the population using tournament selection
-
-        :param n: number of participants. Default is 2
-        :return: selected chromosome
-        """
-        if n > len(self.pop):
-            n = len(self.pop)
-        pop = random.sample(self.pop, n)
-        return min(pop, key=self.fitness)
+    def load_weight(self, weights: Weights) -> None:
+        model_params = self.model.state_dict()
+        model_params['0.weight'] = torch.FloatTensor(weights[:40].reshape(10, 4))
+        model_params['0.bias'] = torch.FloatTensor(weights[40:50])
+        model_params['2.weight'] = torch.FloatTensor(weights[50:80].reshape(3, 10))
+        model_params['2.bias'] = torch.FloatTensor(weights[80:])
+        self.model.load_state_dict(model_params)
 
     @property
-    def best_fitness(self) -> float:
-        """
-        Get the best fitness of the population
+    def num_weights(self) -> int:
+        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-        :return: best fitness
-        """
-        return min(map(self.fitness, self.pop))
+    def on_generation(self, generation: int) -> None:
+        scores = self.fitness_scores
+        self.best_solutions.append(self.best_solution(scores))
+        print(
+            f"Generation: {generation} "
+            f"Best fitness: {best_fitness(scores)} "
+            f"Average fitness: {avg_fitness(scores)} "
+            f"Worst fitness: {worst_fitness(scores)}"
+        )
+
+    def fitness_function(self, weights: Weights) -> float:
+        self.load_weight(weights)
+        accuracy = 0.0
+        with torch.no_grad():
+            for inputs, labels in self.test_loader:
+                labels: torch.Tensor
+                outputs = self.model(inputs)
+                _, predicted = torch.max(outputs.data, 1)
+                accuracy += (predicted == labels).sum().item() / len(labels)
+        accuracy /= len(self.test_loader)
+        return accuracy
+
+    def crossover(self, parent1: Weights, parent2: Weights) -> Pair:
+        crossover_point = random.randint(1, len(parent1) - 1)
+        if random.random() > self.crossover_rate:
+            return parent1, parent2
+        child1 = np.concatenate((parent1[:crossover_point], parent2[crossover_point:]))
+        child2 = np.concatenate((parent2[:crossover_point], parent1[crossover_point:]))
+        return child1, child2
+
+    def mutate(self, individual: Weights) -> Weights:
+        mutated_individual = individual.copy()
+        for i in range(len(mutated_individual)):
+            if random.random() < self.mutation_rate:
+                mutated_individual[i] += np.random.normal(scale=0.1)
+        return mutated_individual
+
+    def select_parents(self, population: np.ndarray[Weights], fitness_scores: list[float]) -> list[Pair]:
+        parents = []
+        for _ in range(int(self.population_size / 2)):
+            parent1 = population[random.choices(range(self.population_size), weights=fitness_scores)[0]]
+            parent2 = population[random.choices(range(self.population_size), weights=fitness_scores)[0]]
+            parents.append((parent1, parent2))
+        return parents
 
     @property
-    def worst_fitness(self) -> float:
-        """
-        Get the worst fitness of the population
+    def fitness_scores(self) -> list[float]:
+        return [self.fitness_function(individual) for individual in self.population]
 
-        :return: worst fitness
-        """
-        return max(map(self.fitness, self.pop))
+    def best_solution(self, fitness_scores: list[float]) -> Weights:
+        return self.population[np.argmax(fitness_scores)]
 
-    @property
-    def avg_fitness(self) -> float:
-        """
-        Get the average fitness of the population
+    def run(self) -> Weights:
+        for i in range(self.num_generations):
+            parents = self.select_parents(self.population, self.fitness_scores)
 
-        :return: average fitness
-        """
-        return sum(map(self.fitness, self.pop)) / len(self.pop)
+            offspring = []
+            for parent1, parent2 in parents:
+                child1, child2 = self.crossover(parent1, parent2)
+                child1 = self.mutate(child1)
+                child2 = self.mutate(child2)
+                offspring.append(child1)
+                offspring.append(child2)
+            self.population = np.array(offspring)
+            self.on_generation(i)
 
-    def run(self, print_freq: int = 10) -> None:
-        """
-        Run the genetic algorithm
-        """
-        while self.counter < self.max_gen:
-            new_pop = []
-            for _ in range(self.pop_size):
-                p1 = self.tournament()
-                p2 = self.tournament()
-                if random.random() < self.prob_cross:
-                    c1, c2 = self.two_point_cross(p1, p2)
-                else:
-                    c1, c2 = p1, p2
-                c1 = self.mutate(c1)
-                c2 = self.mutate(c2)
-                new_pop.append(c1)
-                new_pop.append(c2)
-            self.pop = new_pop
-            self.counter += 1
-            if self.counter % print_freq == 0:
-                print(
-                    f'Gen: {self.counter: >5} '
-                    f'Best: {self.best_fitness: >8.5f} '
-                    f'Worst: {self.worst_fitness: >8.5f} '
-                    f'Avg: {self.avg_fitness: >8.5f}'
-                )
+        best_individual = self.population[np.argmax(self.fitness_scores)]
+        return best_individual

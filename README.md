@@ -47,15 +47,8 @@ jupyter notebook
 
 And then open the notebook `Genetic Algorithms.ipynb`.
 
-### Python
-
-To run the Python script, run the following command.
-
-```shell
-python main.py
-```
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ```
