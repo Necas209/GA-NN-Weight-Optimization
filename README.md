@@ -24,7 +24,7 @@ Install PyTorch using the [official instructions](https://pytorch.org/get-starte
 
 ### Packages
 
-Install the required packages. These include `jupyter`, `scikit-learn`, `torchinfo` and `pygad`.
+Install the required packages. These include `jupyter`, `scikit-learn` and `pygad`.
 To install these packages, run the following command.
 
 ```shell
@@ -32,7 +32,7 @@ conda install jupyter scikit-learn
 ```
 
 ```shell
-conda install -c conda-forge torchinfo pygad
+conda install -c conda-forge pygad
 ```
 
 ## Usage
@@ -50,5 +50,3 @@ And then open the notebook `Genetic Algorithms.ipynb`.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
