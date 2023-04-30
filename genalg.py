@@ -1,6 +1,5 @@
 import random
 from dataclasses import dataclass, field
-from functools import partial
 from typing import Callable
 
 import matplotlib.pyplot as plt
@@ -18,11 +17,14 @@ class GeneticAlgorithm:
     train_set: tuple[torch.Tensor, torch.Tensor]
     population_size: int = 10
     mutation_rate: float = 0.01
+    neuron_off_rate: float = 1e-3
     crossover_rate: float = 0.95
+    elitism: bool = True
     num_generations: int = 100
     on_generation_interval: int = 10
-    best_solutions: list[ModelParams] = field(default_factory=list)
-    fitness_fn: Callable[[nn.Module, ModelParams], float] = None
+    best_solution: ModelParams = None
+    fitness_scores: list[float] = field(default_factory=list)
+    fitness_fn: Callable[[ModelParams], float] = None
     on_generation: Callable[[int, list[float]], None] = None
 
     @property
@@ -40,12 +42,14 @@ class GeneticAlgorithm:
     def mutate(self, individual: ModelParams) -> ModelParams:
         mutated_individual = individual.copy()
         for i in range(len(mutated_individual)):
+            if random.random() < self.neuron_off_rate:
+                mutated_individual[i] = 0.0
             if random.random() < self.mutation_rate:
                 mutated_individual[i] += np.random.normal(scale=0.1)
         return mutated_individual
 
     def select_parents(self, population: Population) -> list[tuple[ModelParams, ModelParams]]:
-        scores = self.fitness_scores(population)
+        scores = self.calculate_scores(population)
         parents = []
         for _ in range(int(self.population_size / 2)):
             parent1 = population[random.choices(range(self.population_size), weights=scores)[0]]
@@ -53,12 +57,13 @@ class GeneticAlgorithm:
             parents.append((parent1, parent2))
         return parents
 
-    def fitness_scores(self, population: Population) -> list[float]:
-        return [self.fitness_fn(self.model, individual) for individual in population]
+    def calculate_scores(self, population: Population) -> list[float]:
+        return [self.fitness_fn(individual) for individual in population]
 
     def run(self) -> None:
         # Initialize population
         population = np.random.uniform(low=-1, high=1, size=(self.population_size, self.num_params))
+        self.best_solution = np.zeros(self.num_params)
         # Run for num_generations
         for gen in range(self.num_generations):
             # Select parents
@@ -74,23 +79,26 @@ class GeneticAlgorithm:
                 offspring.append(child2)
             # Select new population
             population = np.array(offspring)
-            # Save best individual
-            scores = self.fitness_scores(population)
-            best_individual = population[np.argmax(scores)]
-            self.best_solutions.append(best_individual)
+            # Calculate fitness scores
+            scores = self.calculate_scores(population)
+            # Preserve the best individual using elitism
+            if self.elitism:
+                worst_idx = np.argmin(scores)
+                population[worst_idx] = self.best_solution
+            # Update best solution
+            best_idx = np.argmax(scores)
+            best_score = scores[best_idx]
+            best_individual = population[best_idx]
+            if best_score > self.fitness_fn(self.best_solution):
+                self.best_solution = best_individual
+            self.fitness_scores.append(best_score)
             # Print generation info
             if gen % self.on_generation_interval == 0:
                 self.on_generation(gen, scores)
 
-    @property
-    def best_solution(self) -> ModelParams:
-        """ Returns the best overall solution """
-        return max(self.best_solutions, key=partial(self.fitness_fn, self.model))
-
     def plot_fitness(self) -> None:
         """ Plots the fitness of the best solution over time """
-        scores = self.fitness_scores(self.best_solutions)
-        plt.plot(scores)
+        plt.plot(self.fitness_scores)
         plt.title("GA & PyTorch - Iteration vs. Fitness")
         plt.xlabel("Iteration")
         plt.ylabel("Fitness")
