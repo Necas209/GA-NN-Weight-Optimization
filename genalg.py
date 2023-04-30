@@ -13,7 +13,7 @@ Population = np.ndarray[ModelParams]
 class GeneticAlgorithm:
     model: nn.Module
     population_size: int = 10
-    mutation_rate: float = 0.01
+    mutation_rate: float = 0.05
     neuron_off_rate: float = 1e-3
     crossover_rate: float = 0.95
     elitism: bool = True
@@ -65,8 +65,6 @@ class GeneticAlgorithm:
     def run(self) -> None:
         # Initialize population
         population: Population = np.random.uniform(low=-1, high=1, size=(self.population_size, self.num_params))
-        # Initialize best solution
-        self.best_solution = np.zeros(self.num_params)
         # Run for num_generations
         for gen in range(self.num_generations):
             # Select parents
@@ -80,14 +78,13 @@ class GeneticAlgorithm:
             population[1::2] = child2_mutated
             # Preserve the best individual using elitism
             scores = self.calculate_scores(population)
+            max_score = np.max(scores)
             # Update the best solution and score
-            if gen == 0:
-                self.best_score = np.max(scores)
+            if max_score > self.best_score:
+                self.best_score = max_score
                 self.best_solution = population[np.argmax(scores)]
-            else:
-                self.best_score = max(self.best_score, np.max(scores))
             # Preserve the best solution using elitism
-            if self.elitism and gen > 0:
+            if self.elitism:
                 worst_idx = np.argmin(scores)
                 population[worst_idx] = self.best_solution
             # Save fitness score of best solution
@@ -103,3 +100,9 @@ class GeneticAlgorithm:
         plt.xlabel("Iteration")
         plt.ylabel("Fitness")
         plt.show()
+
+    def print_summary(self) -> None:
+        """ Prints a summary of the best solution """
+        print(f"Best solution fitness: {self.best_score}")
+        print(f"Best solution: {self.best_solution}")
+        print(f"Model parameters: {self.num_params}")
