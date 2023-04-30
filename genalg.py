@@ -50,11 +50,15 @@ class GeneticAlgorithm:
 
     def select_parents(self, population: Population) -> list[tuple[ModelParams, ModelParams]]:
         scores = self.calculate_scores(population)
-        parents = []
-        for _ in range(int(self.population_size / 2)):
-            parent1 = population[random.choices(range(self.population_size), weights=scores)[0]]
-            parent2 = population[random.choices(range(self.population_size), weights=scores)[0]]
-            parents.append((parent1, parent2))
+        normalized_scores = scores / np.sum(scores)
+        parent_indices = np.random.choice(
+            range(self.population_size),
+            size=(self.population_size // 2, 2),
+            replace=True,
+            p=normalized_scores
+        )
+        parents = [(population[parent_indices[i, 0]], population[parent_indices[i, 1]])
+                   for i in range(self.population_size // 2)]
         return parents
 
     def calculate_scores(self, population: Population) -> list[float]:
@@ -81,16 +85,16 @@ class GeneticAlgorithm:
             population = np.array(offspring)
             # Calculate fitness scores
             scores = self.calculate_scores(population)
-            # Preserve the best individual using elitism
-            if self.elitism:
-                worst_idx = np.argmin(scores)
-                population[worst_idx] = self.best_solution
             # Update best solution
             best_idx = np.argmax(scores)
             best_score = scores[best_idx]
             best_individual = population[best_idx]
             if best_score > self.fitness_fn(self.best_solution):
                 self.best_solution = best_individual
+            # Preserve the best individual using elitism
+            if self.elitism:
+                worst_idx = np.argmin(scores)
+                population[worst_idx] = self.best_solution
             self.fitness_scores.append(best_score)
             # Print generation info
             if gen % self.on_generation_interval == 0:
