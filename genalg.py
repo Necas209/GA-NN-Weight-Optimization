@@ -1,4 +1,3 @@
-import random
 from dataclasses import dataclass, field
 from typing import Callable
 
@@ -8,7 +7,7 @@ import torch
 import torch.nn as nn
 
 ModelParams = np.ndarray[float]
-Population = list[ModelParams] | np.ndarray[ModelParams]
+Population = np.ndarray[ModelParams]
 
 
 @dataclass
@@ -22,6 +21,7 @@ class GeneticAlgorithm:
     elitism: bool = True
     num_generations: int = 100
     on_generation_interval: int = 10
+    best_score: float = 0.0
     best_solution: ModelParams = None
     fitness_scores: list[float] = field(default_factory=list)
     fitness_fn: Callable[[ModelParams], float] = None
@@ -31,24 +31,24 @@ class GeneticAlgorithm:
     def num_params(self) -> int:
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-    def crossover(self, parent1: ModelParams, parent2: ModelParams) -> tuple[ModelParams, ModelParams]:
-        crossover_point = random.randint(1, len(parent1) - 1)
-        if random.random() > self.crossover_rate:
-            return parent1, parent2
-        child1 = np.concatenate((parent1[:crossover_point], parent2[crossover_point:]))
-        child2 = np.concatenate((parent2[:crossover_point], parent1[crossover_point:]))
+    def crossover(self, parents1: Population, parents2: Population) -> tuple[Population, Population]:
+        num_parents, num_params = parents1.shape
+        crossover_points = np.random.randint(1, num_params, size=num_parents)
+        mask = np.random.random(size=parents1.shape) < self.crossover_rate
+        crossover_mask = np.arange(num_params) < crossover_points[:, np.newaxis]
+        mask = np.logical_and(mask, crossover_mask)
+        child1 = parents1 * np.logical_not(mask) + parents2 * mask
+        child2 = parents2 * np.logical_not(mask) + parents1 * mask
         return child1, child2
 
-    def mutate(self, individual: ModelParams) -> ModelParams:
-        mutated_individual = individual.copy()
-        for i in range(len(mutated_individual)):
-            if random.random() < self.neuron_off_rate:
-                mutated_individual[i] = 0.0
-            if random.random() < self.mutation_rate:
-                mutated_individual[i] += np.random.normal(scale=0.1)
-        return mutated_individual
+    def mutate(self, children: Population) -> Population:
+        mask_off = np.random.random(size=children.shape) < self.neuron_off_rate
+        mask_mutate = np.random.random(size=children.shape) < self.mutation_rate
+        children[mask_off] = 0.0
+        children[mask_mutate] += np.random.normal(scale=0.1, size=np.sum(mask_mutate))
+        return children
 
-    def select_parents(self, population: Population) -> list[tuple[ModelParams, ModelParams]]:
+    def select_parents(self, population: Population) -> tuple[Population, Population]:
         scores = self.calculate_scores(population)
         normalized_scores = scores / np.sum(scores)
         parent_indices = np.random.choice(
@@ -57,45 +57,44 @@ class GeneticAlgorithm:
             replace=True,
             p=normalized_scores
         )
-        parents = [(population[parent_indices[i, 0]], population[parent_indices[i, 1]])
-                   for i in range(self.population_size // 2)]
-        return parents
+        parents1 = population[parent_indices[:, 0]]
+        parents2 = population[parent_indices[:, 1]]
+        return parents1, parents2
 
     def calculate_scores(self, population: Population) -> list[float]:
         return [self.fitness_fn(individual) for individual in population]
 
     def run(self) -> None:
         # Initialize population
-        population = np.random.uniform(low=-1, high=1, size=(self.population_size, self.num_params))
+        population: Population = np.random.uniform(low=-1, high=1, size=(self.population_size, self.num_params))
+        # Initialize best solution
         self.best_solution = np.zeros(self.num_params)
         # Run for num_generations
         for gen in range(self.num_generations):
             # Select parents
-            parents = self.select_parents(population)
-            # Generate offspring
-            offspring = []
-            for parent1, parent2 in parents:
-                # Crossover and mutate
-                child1, child2 = self.crossover(parent1, parent2)
-                child1 = self.mutate(child1)
-                child2 = self.mutate(child2)
-                offspring.append(child1)
-                offspring.append(child2)
-            # Select new population
-            population = np.array(offspring)
-            # Calculate fitness scores
-            scores = self.calculate_scores(population)
-            # Update best solution
-            best_idx = np.argmax(scores)
-            best_score = scores[best_idx]
-            best_individual = population[best_idx]
-            if best_score > self.fitness_fn(self.best_solution):
-                self.best_solution = best_individual
+            parents1, parents2 = self.select_parents(population)
+            # Vectorized crossover and mutation
+            child1, child2 = self.crossover(parents1, parents2)
+            child1_mutated = self.mutate(child1)
+            child2_mutated = self.mutate(child2)
+            # Update population
+            population[::2] = child1_mutated
+            population[1::2] = child2_mutated
             # Preserve the best individual using elitism
-            if self.elitism:
+            scores = self.calculate_scores(population)
+            if self.elitism and gen > 0:
                 worst_idx = np.argmin(scores)
                 population[worst_idx] = self.best_solution
-            self.fitness_scores.append(best_score)
+                scores[worst_idx] = self.best_score
+            # Update best solution
+            gen_best_idx = np.argmax(scores)
+            gen_best_score = scores[gen_best_idx]
+            gen_best_solution = population[gen_best_idx]
+            if gen_best_score > self.best_score:
+                self.best_solution = gen_best_solution
+                self.best_score = gen_best_score
+            # Save fitness score of best solution
+            self.fitness_scores.append(self.best_score)
             # Print generation info
             if gen % self.on_generation_interval == 0:
                 self.on_generation(gen, scores)
