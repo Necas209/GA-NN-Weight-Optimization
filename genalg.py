@@ -13,7 +13,6 @@ Population = np.ndarray[ModelParams]
 @dataclass
 class GeneticAlgorithm:
     model: nn.Module
-    train_set: tuple[torch.Tensor, torch.Tensor]
     population_size: int = 10
     mutation_rate: float = 0.01
     neuron_off_rate: float = 1e-3
@@ -82,21 +81,20 @@ class GeneticAlgorithm:
             population[1::2] = child2_mutated
             # Preserve the best individual using elitism
             scores = self.calculate_scores(population)
+            # Update the best solution and score
+            if gen == 0:
+                self.best_score = np.max(scores)
+                self.best_solution = population[np.argmax(scores)]
+            else:
+                self.best_score = max(self.best_score, np.max(scores))
+            # Preserve the best solution using elitism
             if self.elitism and gen > 0:
                 worst_idx = np.argmin(scores)
                 population[worst_idx] = self.best_solution
-                scores[worst_idx] = self.best_score
-            # Update best solution
-            gen_best_idx = np.argmax(scores)
-            gen_best_score = scores[gen_best_idx]
-            gen_best_solution = population[gen_best_idx]
-            if gen_best_score > self.best_score:
-                self.best_solution = gen_best_solution
-                self.best_score = gen_best_score
             # Save fitness score of best solution
             self.fitness_scores.append(self.best_score)
             # Print generation info
-            if gen % self.on_generation_interval == 0:
+            if gen % self.on_generation_interval == 0 or gen == self.num_generations - 1:
                 self.on_generation(gen, scores)
 
     def plot_fitness(self) -> None:
