@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Genetic-Algorithms.iml" filepath="$PROJECT_DIR$/.idea/Genetic-Algorithms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/GA-NN-Weight-Optimization.iml" filepath="$PROJECT_DIR$/.idea/GA-NN-Weight-Optimization.iml" />
     </modules>
   </component>
 </project>
