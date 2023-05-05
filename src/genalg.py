@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch.nn as nn
 
-ModelParams = np.ndarray[float]
-Population = np.ndarray[ModelParams]
+ModelParams = np.ndarray[tuple[int], np.dtype[np.float64]]
+Population = np.ndarray[tuple[int, int], np.dtype[np.float64]]
 
 
 @dataclass
