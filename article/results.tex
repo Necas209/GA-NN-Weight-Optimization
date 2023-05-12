@@ -1,14 +1,17 @@
-Neste capítulo serão apresentados e analisados os resultados da simulação de um incêndio florestal, em quatro cenários distintos. Estes cenários apresentam configurações de modelo semelhantes, diferindo apenas nos seguintes parâmetros: velocidade do vento no sentido Norte e Este, e inclinação do terreno. Todos os valores podem ser consultados na Tab.~\ref{tab:scenarios}.
+Neste capítulo serão apresentados e analisados os resultados da simulação de um incêndio florestal, em quatro cenários distintos.
+Estes cenários apresentam configurações de modelo semelhantes, diferindo apenas nos seguintes parâmetros: velocidade do vento no sentido norte e este, e inclinação do terreno.
+Todos os valores podem ser consultados na Tab.~\ref{tab:scenarios}.
 
 \begin{table}[tbhp]
     \centering
-    \begin{tabular}{c|cccc} 
+    \begin{tabular}{c|cccc}
     \hline
-    \textbf{Propriedades} & \textbf{Cenário 1} & \textbf{Cenário 2} & \textbf{Cenário 3} & \textbf{Cenário 4} \\ 
+    \textbf{Propriedades} & \textbf{Cenário 1} & \textbf{Cenário 2} & \textbf{Cenário 3} & \textbf{Cenário 4} \\
     \hline
     Densidade & 25\% & - & - & - \\
     Carvalhos/pinheiros & 271/272 & - & - & - \\
-    Prob. propagação & 0.4 & - & - & - \\
+    Prob.
+    propagação & 0.4 & - & - & - \\
     Temperatura inicial & $\SI{20}{\degreeCelsius}$ & - & - & - \\
     Inclinação & \ang{30} & \ang{-30} & \ang{30} & \ang{-30} \\
     Vento Norte & -10 & -10 & 10 & 10 \\
@@ -23,33 +26,9 @@ Cada cenário foi executado onze vezes, e para cada execução foram com guardad
 
 \section{Cenário 1}\label{sec:scenario1}
 
-O primeiro cenário apresenta uma inclinação positiva do terreno, de \ang{30}, com vento sudeste de intensidade $(-10, 15)$ \si{\meter\per\second}, ou seja, a favor da propagação do incêndio. O modelo terminou com 71.3\% da floresta ardida, após 3377 ticks, ou 387 árvores em termos absolutos - 205 carvalhos e 182 pinheiros.
+O primeiro cenário apresenta uma inclinação positiva do terreno, de \ang{30}, com vento sudeste de intensidade $(-10, 15)$ \si{\meter\per\second}, ou seja, a favor da propagação do incêndio.
+O modelo terminou com 71.3\% da floresta ardida, após 3377 ticks, ou 387 árvores em termos absolutos - 205 carvalhos e 182 pinheiros.
 
-De início, o fogo propaga-se rápido, como se pode notar pelas curvas acentuadas das Fig.~\ref{fig:S1ForestBurnt} e \ref{fig:S1TreesBurnt}, acabando por abrandar por volta dos 2000 ticks e estabilizar pouco tempo depois. As fagulhas, dado a sua aleatoriedade e condições específicas de geração, apresentam uma evolução mais errática, evidente pela Fig.~\ref{fig:S1Sparks}, só começando a espalhar-se a partir dos 400 ticks, e atingindo um pico de 15 fagulhas por tick por volta dos 1500 ticks. Dado que a floresta é pouco densa, a temperatura média não ultrapassou os $\SI{330}{\degreeCelsius}$, já a temperatura máxima, atingida após 800 ticks (Fig.~\ref{fig:S1Temp}), foi muito superior, cerca de $\SI{1870}{\degreeCelsius}$.
-    
-\begin{figure}[H]
-    \includegraphics[width=\linewidth]{imagens/scenario1/forest_fire.png}
-    \caption{Cenário 1 - Total de floresta ardida (em percentagem)}
-    \label{fig:S1ForestBurnt}        
-\end{figure}
-    
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{imagens/scenario1/trees_burnt.png}
-    \caption{Cenário 1 - Total de árvores ardidas}
-    \label{fig:S1TreesBurnt}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{imagens/scenario1/sparks.png}
-    \caption{Cenário 1 - Evolução do número de fagulhas}
-    \label{fig:S1Sparks}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{imagens/scenario1/temperature.png}
-    \caption{Cenário 1 - Evolução da temperatura média e máxima}
-    \label{fig:S1Temp}
-\end{figure}
+De início, o fogo propaga-se rápido, como se pode notar pelas curvas acentuadas das Fig.~\ref{fig:S1ForestBurnt} e~\ref{fig:S1TreesBurnt}, acabando por abrandar por volta dos 2000 ticks e estabilizar pouco tempo depois.
+As fagulhas, dado a sua aleatoriedade e condições específicas de geração, apresentam uma evolução mais errática, evidente pela Fig.~\ref{fig:S1Sparks}, só começando a espalhar-se a partir dos 400 ticks, e atingindo um pico de 15 fagulhas por tick por volta dos 1500 ticks.
+Dado que a floresta é pouco densa, a temperatura média não ultrapassou os $\SI{330}{\degreeCelsius}$, já a temperatura máxima, atingida após 800 ticks (Fig.~\ref{fig:S1Temp}), foi muito superior, cerca de $\SI{1870}{\degreeCelsius}$.

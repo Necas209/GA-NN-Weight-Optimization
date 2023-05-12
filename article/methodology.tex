@@ -1,14 +1,18 @@
-A escolha da linguagem Python para este trabalho deve-se a várias vantagens que a mesma oferece. Python é uma linguagem de programação de alto nível, reconhecida pela sua sintaxe simples e legibilidade, o que facilita o desenvolvimento e a manutenção do código. Por outro lado, Python possui uma ampla gama de bibliotecas e frameworks para aprendizagem de máquina e computação científica, como NumPy, scikit-learn e PyTorch, que tornam mais fácil a implementação de redes neuronais e algoritmos genéticos.
+A escolha da linguagem Python para este trabalho deve-se a várias vantagens que a mesma oferece.
+Python é uma linguagem de programação de alto nível, reconhecida pela sua sintaxe simples e legibilidade, facilitando o desenvolvimento e a manutenção do código.
+Por outro lado, Python possui uma ampla gama de bibliotecas e ‘frameworks’ para aprendizagem de máquina e computação científica, como NumPy, scikit-learn e PyTorch, que facilitam a implementação de redes neuronais e algoritmos genéticos.
 
-De modo a poder comparar os resultados obtidos, o algoritmo genético foi implementado de raiz e com recurso à biblioteca PyGAD \cite{Gad2021PyGAD:Library}. PyGAD é uma biblioteca open-source, compatível com Keras e PyTorch, utilizada para construir algoritmos genéticos e otimizar algoritmos de ML. Este oferece diferentes tipos de operadores de cruzamento, mutação e seleção, permitindo a otimização de inúmeros problemas, através da personalização da função de aptidão.
+De modo a poder comparar os resultados obtidos, o algoritmo genético foi implementado de raiz e com recurso à biblioteca PyGAD~\cite{Gad2021PyGAD:Library}.
+PyGAD é uma biblioteca ‘open-source’, compatível com Keras e PyTorch, utilizada para construir algoritmos genéticos e otimizar algoritmos de ML. Este oferece diferentes tipos de operadores de cruzamento, mutação e seleção, permitindo a otimização de inúmeros problemas, através da personalização da função de aptidão.
+
 
 \section{Modelo de Classificação}\label{sec:neural_net}
 
-Tal como foi referido em \ref{chapter:problem}, e respeitando as características do dataset IRIS, a rede neuronal tem 4 neurónios na camada de entrada, 10 neurónios na camada oculta, e 3 neurónios na camada de saída, a fim de classificar as 3 espécies.
+Tal como foi referido em~\ref{ch:problem}, e respeitando as características do dataset IRIS, a rede neuronal tem 4 neurónios na camada de entrada, 10 neurónios na camada oculta, e 3 neurónios na camada de saída, de modo a classificar as 3 espécies.
 
 \begin{figure}[htbp]
     \centering
-        \begin{neuralnetwork}[height=5]
+    \begin{neuralnetwork}[height=5]
         \newcommand{\x}[2]{$x_#2$}
         \newcommand{\y}[2]{$y_#2$}
         \newcommand{\h}[2]{\ifnum #2=4 $\cdots$ \else {\ifnum #2>4 $h_{10}$ \else $h_#2$ \fi} \fi}
@@ -21,28 +25,33 @@ Tal como foi referido em \ref{chapter:problem}, e respeitando as característica
     \label{fig:neural_net}
 \end{figure}
 
-O modelo em questão é uma Fully Connected Neural Network (FCN), também conhecida por Rede Neuronal Totalmente Conectada, como se poder ver pela Fig.~\ref{fig:neural_net}. Trata-se de uma arquitetura de rede neuronal artificial na qual cada neurónio numa camada está conectado a todos os neurónios da camada seguinte - conexões totalmente conectadas ou conexões densas.
+O modelo em questão é uma \qq{Fully Connected Neural Network} (FCN), também conhecida por Rede Neuronal Totalmente Conectada, como se poder ver pela Fig.~\ref{fig:neural_net}.
+Trata-se de uma arquitetura de rede neuronal artificial na qual cada neurónio numa camada está conectado a todos os neurónios da camada seguinte - conexões totalmente conectadas ou conexões densas.
 
 \begin{table}[htpb]
     \centering
-    \begin{tabular}{cccc} \hline
-    Camada & Pesos & Bias & Parâmetros \\ \hline
-    Entrada (X) & 40 & 10 & 50 \\
-    Oculta (H) & 30 & 3 & 33 \\
-    Saída (Y) & - & - & - \\ \hline
-    \textbf{Total} & 50 & 33 & 83 \\ \hline
+    \begin{tabular}{cccc}
+        \hline
+        Camada         & Pesos & Bias & Parâmetros \\ \hline
+        Entrada (X)    & 40    & 10   & 50         \\
+        Oculta (H)     & 30    & 3    & 33         \\
+        Saída (Y)      & -     & -    & -          \\ \hline
+        \textbf{Total} & 50    & 33   & 83         \\ \hline
     \end{tabular}
     \caption{Detalhes da rede neuronal}
     \label{tab:nn_summary}
 \end{table}
 
-Assim, e de acordo com a informação disponível na Tabela~\ref{tab:nn_summary}, o modelo em questão contém um total de 83 parâmetros que podem ser otimizados pelo algoritmo genético descrito na secção seguinte.
+Assim, e segundo a informação disponível na Tabela~\ref{tab:nn_summary}, o modelo em questão contém um total de 83 parâmetros que podem ser otimizados pelo algoritmo genético descrito na secção seguinte.
+
 
 \section{Algoritmo Genético}\label{sec:gen_alg}
 
-O objetivo principal deste algoritmo é fornecer uma ferramenta eficiente para modelar e prever o comportamento dos incêndios florestais, permitindo a avaliação dos efeitos de diferentes cenários na propagação do fogo. A simulação baseada em agentes é uma abordagem que considera a interação entre os elementos do ambiente e os agentes que nele atuam, permitindo a modelação de comportamentos complexos e dinâmicos. 
+O objetivo principal deste algoritmo é fornecer uma ferramenta eficiente para modelar e prever o comportamento dos incêndios florestais, permitindo a avaliação dos efeitos de diferentes cenários na propagação do fogo.
+A simulação baseada em agentes é uma abordagem que considera a interação entre os elementos do ambiente e os agentes que nele atuam, permitindo a modelação de comportamentos complexos e dinâmicos.
 
-O algoritmo descrito aqui considera fatores como topografia, vento, temperatura, a estrutura da comunidade vegetal e outros elementos relevantes para o comportamento do fogo. A seguir, serão apresentados detalhes do funcionamento do algoritmo e como ele foi implementado para atender aos objetivos.
+O algoritmo descrito aqui considera fatores como topografia, vento, temperatura, a estrutura da comunidade vegetal e outros elementos relevantes para o comportamento do fogo.
+A seguir, serão apresentados detalhes do funcionamento do algoritmo e como ele foi implementado para atender aos objetivos.
 
 \SetKwFunction{calcAltitude}{calcAltitude}
 \SetKwFunction{random}{random}
@@ -61,7 +70,10 @@ O algoritmo descrito aqui considera fatores como topografia, vento, temperatura,
     }
 \end{algorithm}
 
-Em Alg.~\ref{alg:create_forest}, encontra-se detalhado o processo de população da floresta. Este começa por definir a frequência, em ticks, de criação de fagulhas, seguido da atribuição da \textit{seed} responsável pela distribuição de árvores, bem como pela criação do fogo. A cada célula é atribuída uma altitude dependente da sua posição, bem como uma temperatura inicial escolhida pelo utilizador. Também, segundo a densidade da floresta, são plantadas árvores nos diferentes patches.
+Em Alg.~\ref{alg:create_forest}, encontra-se detalhado o processo de população da floresta.
+Este começa por definir a frequência, em ticks, de criação de fagulhas, seguido da atribuição da \textit{seed} responsável pela distribuição de árvores, bem como pela criação do fogo.
+A cada célula é atribuída uma altitude dependente da sua posição, bem como uma temperatura inicial escolhida pelo utilizador.
+Também, segundo a densidade da floresta, são plantadas árvores nos diferentes patches.
 
 \SetKwFunction{ignite}{ignite}
 \SetKwFunction{saveConfig}{saveConfig}
@@ -83,7 +95,11 @@ Em Alg.~\ref{alg:create_forest}, encontra-se detalhado o processo de população
     \saveIterations{}\;
 \end{algorithm}
 
-Com a floresta plantada, resta criar o fogo inicial, tal como se pode ver em Alg.~\ref{alg:start_fire}. Começa-se por escolher aleatoriamente um patch, no qual é criada a primeira chama. De seguida, são salvas as configurações do cenário em ficheiro YAML, e reiniciada a \textit{seed}. O modelo entra num ciclo condicional, responsável por salvar o estado do modelo em cada iteração e de propagar o incêndio. Após o fim do ciclo, são guardados em ficheiro CSV os resultados das iterações.
+Com a floresta plantada, resta criar o fogo inicial, tal como se pode ver em Alg.~\ref{alg:start_fire}.
+Começa-se por escolher aleatoriamente um ‘patch’, no qual é criada a primeira chama.
+A seguir, são salvas as configurações do cenário em ficheiro YAML, e reiniciada a \textit{seed}.
+O modelo entra num ciclo condicional, responsável por salvar o estado do modelo em cada iteração e de propagar o incêndio.
+Após o fim do ciclo, são guardados em ficheiro CSV os resultados das iterações.
 
 \SetKwFunction{spreadFire}{spreadFire}
 \SetKwFunction{canSpark}{canSpark}
@@ -96,43 +112,43 @@ Com a floresta plantada, resta criar o fogo inicial, tal como se pode ver em Alg
 \begin{algorithm}
     \caption{Evolução do incêndio (\texttt{fire})}\label{alg:fire}
     \For{$tree \in trees$}{
-        \If{isBurning}{
-            \If{$color < ``yellow"$}{
-                \spreadFire{neighbors, altitude}\;
-            }
-            \If{$color < ``brown"$}{
-                \If{$\random{$0, 1$} < sparkProbability$ {\bf and} $ticksSinceSpark > sparkFrequency$}{
-                    \create{spark}\;
-                    $ticksSinceSpark \gets 0$\;
-                }
-                \Else{
-                    $ticksSinceSpark \gets ticksSinceSpark + 1$\;
-                }
-            }
-        }
+    \If{isBurning}{
+    \If{$color < ``yellow"$}{
+        \spreadFire{neighbors, altitude}\;
     }
-    \For{$spark \in sparks$}{
-        \If{$position \neq finalPosition$}{
-            \forward{$0.1$}\;
-        }
-        \Else{
-            \ignite{patch-here}\;
-        }
-    }
-    \fadeEmbers{}\;
-    \tick{}\;
+    \If{$color < ``brown"$}{
+    \If{$\random{$0, 1$} < sparkProbability$ {\bf and} $ticksSinceSpark > sparkFrequency$}{
+\create{spark}\;
+$ticksSinceSpark \gets 0$\;
+}
+\Else{
+$ticksSinceSpark \gets ticksSinceSpark + 1$\;
+}
+}
+}
+}
+\For{$spark \in sparks$}{
+\If{$position \neq finalPosition$}{
+\forward{$0.1$}\;
+}
+\Else{
+\ignite{patch-here}\;
+}
+}
+\fadeEmbers{}\;
+\tick{}\;
 \end{algorithm}
 
 O Algoritmo~\ref{alg:fire} representa o algoritmo responsável pela evolução do incêndio ao longo da execução do modelo. Em cada tick, as árvores a arder espalham o fogo para as células vizinhas e geram fagulhas, segundo uma certa probabilidade, de acordo com a cor das suas folhas - esta representa o estado da árvore, mais ou menos queimada. Já as fagulhas movem-se em direção à sua posição final, na qual incendeiam as árvores presentes. Por fim, o estado de queima das árvores é atualizado com o procedimento \texttt{fadeEmbers}, responsável por alterar as propriedades da árvore, em particular a sua cor.
 
 \begin{algorithm}
-    \caption{Ignição do fogo (\texttt{ignite})}\label{alg:ignite}
-    \create{fire}\;
-    \For{$tree \in trees{-}here$}{
-        \If{{\bf not} ($isBurning$ {\bf and} $isBurnt$)}{
-            $isBurning \gets true$\;
-        }
-    }
+\caption{Ignição do fogo (\texttt{ignite})}\label{alg:ignite}
+\create{fire}\;
+\For{$tree \in trees{-}here$}{
+\If{{\bf not} ($isBurning$ {\bf and} $isBurnt$)}{
+$isBurning \gets true$\;
+}
+}
 \end{algorithm}
 
 Para incendiar as árvores, recorremos ao procedimento \texttt{ignite}, definido em Alg.~\ref{alg:ignite}. Este algoritmo é responsável por criar um agente \textit{fire} na célula atual, bem como de incendiar quaisquer árvores que não estejam a arder na mesma.
@@ -141,32 +157,32 @@ Para incendiar as árvores, recorremos ao procedimento \texttt{ignite}, definido
 \SetKwFunction{meanTemperature}{meanTemperature}
 
 \begin{algorithm}
-    \caption{Propagação do fogo (\texttt{spreadFire})}\label{alg:spread_fire}
-    \KwIn{fireAltitude}
-    $probability \gets spreadProbability$\;
-    $direction \gets \towards{this}$\;
-    \Switch{direction}{
-        \Case{\ang{0}}{
-            $probability \gets probability - northWindSpeed$\;
-        }
-        \Case{\ang{90}}{
-            $probability \gets probability - eastWindSpeed$\;
-        }
-        \Case{\ang{180}}{
-            $probability \gets probability + northWindSpeed$\;
-        }
-        \Case{\ang{270}}{
-            $probability \gets probability + eastWindSpeed$\;
-        }
-    }
-    $meanTemp \gets \meanTemperature{neighbors}$\;
-    $probability \gets probability + \ln^2{(meanTemp + 1)}$\;
-    \If{$fireAltitude > altitude$}{
-        $probability \gets probability\cdot(1+|\tan(\frac{inclination}{3})|)$\;
-    }
-    \If{\random{$0, 100$} $<$ probability}{
-        \ignite{patch-here}\;
-    }
+\caption{Propagação do fogo (\texttt{spreadFire})}\label{alg:spread_fire}
+\KwIn{fireAltitude}
+$probability \gets spreadProbability$\;
+$direction \gets \towards{this}$\;
+\Switch{direction}{
+\Case{\ang{0}}{
+$probability \gets probability - northWindSpeed$\;
+}
+\Case{\ang{90}}{
+$probability \gets probability - eastWindSpeed$\;
+}
+\Case{\ang{180}}{
+$probability \gets probability + northWindSpeed$\;
+}
+\Case{\ang{270}}{
+$probability \gets probability + eastWindSpeed$\;
+}
+}
+$meanTemp \gets \meanTemperature{neighbors}$\;
+$probability \gets probability + \ln^2{(meanTemp + 1)}$\;
+\If{$fireAltitude > altitude$}{
+$probability \gets probability\cdot(1+|\tan(\frac{inclination}{3})|)$\;
+}
+\If{\random{$0, 100$} $<$ probability}{
+\ignite{patch-here}\;
+}
 \end{algorithm}
 
 Por fim, temos o algoritmo responsável pela propagação do fogo em si, retratado em Alg.~\ref{alg:spread_fire}. Começa-se por determinar a direção do fogo em relação à célula atual, e por inicializar a probabilidade de propagação com o valor definido pelo utilizador no início do programa. De seguida, consoante a direção do vento, ajusta-se adequadamente esta, tal que o mesmo possa contribuir, positiva ou negativamente para essa propagação. Segue-se o cálculo da temperatura média nas células vizinhas, que é igualmente usada para modificar novamente a propriedade (quanto mais quente estiver o ambiente em redor, melhor se propaga o fogo). Por fim, e porque o fogo tende a subir, quando enfrenta terrenos íngremes, a probabilidade é alterada uma última vez para refletir a inclinação do terreno. Termina-se por incendiar a célula presente, segundo o valor final da probabilidade de propagação.
