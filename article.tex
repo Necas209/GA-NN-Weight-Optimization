@@ -12,6 +12,10 @@
 \usepackage[hidelinks,pdfusetitle]{hyperref}
 \usepackage{xcolor}
 \usepackage{siunitx}
+\usepackage{textcmds}
+\usepackage{tikz}
+\usepackage{listofitems} % for \readlist to create arrays
+\usepackage{neuralnetwork}
 
 \hypersetup{
     breaklinks=true,
@@ -34,7 +38,7 @@
    {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\Huge}
 \titlespacing*{\chapter}{0pt}{0pt}{30pt}
 
-\title{{\bf Computação Natural}\\ Mestrado em Engenharia Informática - 1.º ano\\\vspace*{1cm} José Paulo Barroso de Moura Oliveira\\ Eduardo José Solteiro Pires\\\vspace*{3cm}\textbf{Trabalho Prático}\\\vspace*{0.5cm} Otimização de Redes Neuronais usando Algoritmos Genéticos \vspace*{1cm}}
+\title{{\textbf{Computação Natural}}\\ Mestrado em Engenharia Informática - 1.º ano\\\vspace*{1cm} José Paulo Barroso de Moura Oliveira\\ Eduardo José Solteiro Pires\\\vspace*{3cm}\textbf{Trabalho Prático}\\\vspace*{0.5cm} Otimização de Redes Neuronais usando Algoritmos Genéticos \vspace*{1cm}}
 \author{Diogo Medeiros (70633) \and João Santos (68843)}
 \date{maio 2023}
 
@@ -62,31 +66,94 @@ Através deste estudo, espera-se demonstrar a importância e complexidade da sim
 \listofalgorithms
 
 \chapter{Introdução}\label{chapter:introduction}
-\input{capítulos/introdução}
+No âmbito da Unidade Curricular de Computação Natural, foi solicitado um trabalho prático que consiste no desenvolvimento de um algoritmo genético na linguagem de programação Python, com o objetivo de otimizar os parâmetros de uma Rede Neuronal Artificial.
+
+\section{Algoritmos Genéticos}\label{sec:gen_algs}
+
+Os algoritmos genéticos (GA) são algoritmos de pesquisa baseados na mecânica da seleção natural e nos princípios da genética, que combinam a sobrevivência dos indivíduos mais aptos numa população de entidades binárias - cromossomas, com a troca estruturada e aleatória de informação (Fig.~\ref{fig:ea_flowchart}). 
+
+Em cada geração, um novo conjunto de indivíduos (sequências) é criado usando pedaços dos elementos mais aptos. Ainda que aleatórios, os  algoritmos genéticos não são uma simples \qq{caminhada} estocástica, explorando eficientemente a informação histórica para especular novos pontos de pesquisa com um desempenho esperado melhorado. \cite{Goldberg1989GeneticLearning}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance = 2.9cm]
+\tikzstyle{frame} = [rectangle, draw, text width=6em, text centered, minimum height=3em]
+\tikzstyle{line} = [draw, ->]
+\node [frame] (pop) {População};
+\node [above=2cm, left of=pop] (init) {Inicialização};
+\node [below=2cm, left of=pop] (term) {Finalização};
+\node [frame, above=2cm, right of=pop] (parents)  {Pais};
+\node [frame, below=2cm, right of=pop] (off)  {Filhos};
+\path [line] (parents) -- node[right,align=left,pos=.5] {Cruzamento}(off);
+\path [line] (init) |- (pop.170);
+\path [line] (pop.190) -| (term);
+\path [line] (off) -| node[below,pos=.25, align=center] {Mutação}(pop);
+\path [line] (pop) |- node[above,pos=.75, align=center] {Seleção}(parents);
+\end{tikzpicture}
+\caption{Processo geral de um algoritmo genético}
+\label{fig:ea_flowchart}
+\end{figure}
+
+\section{Redes Neuronais}\label{sec:neural_nets}
+
+As Redes Neuronais Artificiais (ANNs) são modelos computacionais inspirados no funcionamento do cérebro humano, compostos por unidades de processamento, chamadas neurónios, responsáveis por receber entradas, processar informação e gerar saídas. As ANNs utilizam conexões sinápticas ajustáveis para aprender com os dados de entrada. \cite{Lippmann1988AnNets}
+
+Essas redes possuem a capacidade de aprender por meio de exemplos e generalizar esse conhecimento para novos dados. Por essa razão, elas são amplamente utilizadas em diversas áreas, como reconhecimento de padrões, classificação, previsão, processamento de imagens, entre outras. \cite{Jain1996ArtificialTutorial}
+
+Atualmente, as ANNs são consideradas ferramentas fundamentais para aprendizagem de máquina (ML) e inteligência artificial (AI), com inúmeras aplicações práticas em saúde, finanças, indústria e outros setores.
+
+\section{Otimização de Redes Neuronais}\label{sec:optim_nns}
+
+A crescente popularidade das ANNs na década de 80 potenciou o surgimento de novas técnicas para o seu treino e otimização, com particular atenção para os algoritmos genéticos. A retropropagação (BP), apesar da sua utilidade e simplicidade, apresentava limitações, entre as quais:
+\begin{itemize}
+    \item a pobre escalabilidade face ao aumento da complexidade do problema (maior dimensionalidade e/ou complexidade dos dados), resultando numa degradação de desempenho;
+    \item a necessidade de diferenciabilidade no cálculo dos gradientes, que impede o seu uso em certos tipos de nós e critérios de otimização não-diferenciáveis.
+\end{itemize}
+
+Para superar essas limitações, Montana e Davis \cite{Montana1989} propuseram um algoritmo genético capaz de codificar os pesos duma rede neuronal \textit{feed-forward} (FNN) numa lista de números reais, utilizando uma função de \textit{fitness} para avaliar o desempenho da rede, e incorporando operadores de mutação, cruzamento e gradiente para gerar novas soluções. 
+
+Montana e Davis realizaram múltiplas experiências usando uma base de dados de imagens de energia acústica, e compararam o desempenho do algoritmo genético com o da retropropagação. Os resultados mostraram que o GA superou o BP em termos de velocidade de treino e capacidade de lidar com nós e critérios de otimização, provando os GAs como uma alternativa eficaz à retropropagação, especialmente em problemas complexos e não diferenciáveis.
 
 \chapter{Problema}\label{chapter:problem}
-A simulação de incêndios florestais é um desafio importante para os profissionais que trabalham na prevenção e combate a incêndios. Essa tarefa é essencial para entender o comportamento dos incêndios em diferentes situações, e determinar as melhores táticas de combate. Para realizar essa análise de forma eficiente, é necessário considerar diversos fatores que afetam o comportamento do fogo, como topografia, vento, temperatura, fagulhas e tipo de árvores presentes na região.
 
-Para realizar essas simulações com precisão e rapidez, o uso de sistemas de agentes inteligentes tem se mostrado uma opção promissora. Esses sistemas permitem a criação de modelos complexos, que levam em conta uma grande quantidade de variáveis, e podem simular o comportamento do fogo em tempo real. Além disso, é possível utilizar algoritmos de aprendizado de máquina para otimizar a tática de combate, e reduzir o risco de acidentes ou danos à fauna e flora local.
+O treino de redes neuronais é um processo fundamental para obter um desempenho adequado em tarefas de classificação, reconhecimento de padrões e outras aplicações. No entanto, encontrar os parâmetros ideais para uma rede neural pode ser um desafio devido à sua complexidade e ao vasto espaço de busca envolvido. 
 
-O modelo de simulação construído deverá apresentar um gráfico com o número de árvores queimadas ao longo do tempo, além de armazenar esses dados em ficheiro. O algoritmo deverá ser executado múltiplas vezes para cada cenário, a fim de garantir a veracidade  dos resultados.
+Nesse contexto, técnicas como os algoritmos genéticos (GAs) têm mostrado eficácia na otimização dos parâmetros das redes neuronais. Os GAs combinam conceitos da teoria da evolução biológica, como a seleção natural, o cruzamento e a mutação, para explorar o espaço de pesquisa de forma eficiente. Estas técnicas permitem encontrar conjuntos de parâmetros que maximizem o desempenho da rede neuronal, melhorando a precisão das classificações e tornando-a mais adaptável a diferentes conjuntos de dados.
+
+O objetivo do presente trabalho consiste em desenvolver um algoritmo genético capaz de encontrar os pesos ideais de uma rede neuronal, de modo a maximizar o seu desempenho na classificação de flores do género Iris \textit{L.}, recorrendo ao dataset Iris \cite{Fisher1988}. 
+
+A rede neuronal em questão deverá ter a seguinte estrutura:
+\begin{itemize}
+    \item 4 neurónios na camada de entrada
+    \item 10 neurónios na camada oculta
+    \item 3 neurónios na camada de saída
+\end{itemize}
+
+O algoritmo desenvolvido deverá ser igualmente capaz de inibir conexões a certos neurónios da rede durante a sua execução. Essa modificação tem como objetivo explorar a capacidade da rede de desativar neurónios irrelevantes para a tarefa de classificação, visando otimizar a sua eficiência computacional.
 
 \chapter{Metodologia}\label{chapter:methodology}
-\input{capítulos/metodologia}
+\input{article/methodology}
 
 \chapter{Resultados}\label{chapter:results}
-\input{capítulos/resultados}
+\input{article/results}
 
 \chapter{Conclusões}
-\input{capítulos/conclusões}
+Neste trabalho, desenvolveu-se um sistema computacional com agentes racionais utilizando a ferramenta NetLogo, com o objetivo de simular a propagação de um incêndio florestal considerando diferentes fatores ambientais. Foram analisados quatro cenários distintos, variando a inclinação do terreno e a direção do vento.
 
+Os resultados obtidos não foram conforme o esperado, uma vez que os cenários com vento a favor e contra a inclinação apresentaram valores contraditórios. As nossas expectativas eram de que a propagação do incêndio seria maior nos casos em que o vento estivesse a favor da inclinação, e menor nos casos em que o vento estivesse contra a inclinação. No entanto, o que se observou foi que a percentagem da floresta ardida e outros parâmetros analisados não seguiram essa lógica.
+
+Uma possível explicação para os resultados contraditórios pode ser a simplificação de alguns elementos do modelo, bem como a aleatoriedade de fatores como a geração de fagulhas. Outro fator que poderá ter contribuído para essa contradição é a alta probabilidade de propagação utilizada, que pode ter mascarado o efeito esperado da direção do vento e da inclinação do terreno.
+
+A partir das conclusões deste trabalho, é possível sugerir melhorias no modelo de simulação para investigação futura. Estas melhorias podem incluir a consideração de outros fatores ambientais, como a humidade do ar e do solo, e uma análise mais aprofundada das probabilidades de propagação. Além disso, a realização de mais testes com diferentes configurações de parâmetros pode ajudar a compreender melhor as discrepâncias observadas.
+
+Concluímos que a simulação baseada em agentes é uma ferramenta valiosa no estudo de incêndios florestais, permitindo aos investigadores compreender melhor as complexas interações e comportamentos envolvidos. Essas simulações têm sido usadas para explorar tópicos como estratégias de combate a incêndios, impacto do clima e topografia, e fatores humanos na gestão de incêndios. A melhor compreensão destes fatores pode levar a decisões mais informadas e práticas mais eficazes, tornando a simulação baseada em agentes uma ferramenta essencial na redução do impacto dos incêndios florestais. Embora os resultados não tenham sido os esperados, o trabalho realizado neste projeto servirá como base para futuras investigações e melhorias no campo da prevenção e combate a incêndios florestais.
 \appendix
 \chapter{Anexos dos ficheiros fonte}\label{chapter:appendix}
 \section{Especificação do algoritmo genético}\label{sec:model_spec}
 \inputminted[breaklines]{python}{src/genalg.py}
 
 \bibliographystyle{IEEEtran}
-\bibliography{references}
+\bibliography{article/references}
 
 \end{document}
 

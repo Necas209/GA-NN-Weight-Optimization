@@ -1,94 +1,44 @@
-A ferramenta NetLogo foi escolhida para resolver o problema proposto devido às suas características que a tornam uma linguagem de programação ideal para a modelação de sistemas complexos baseados em agentes. 
+A escolha da linguagem Python para este trabalho deve-se a várias vantagens que a mesma oferece. Python é uma linguagem de programação de alto nível, reconhecida pela sua sintaxe simples e legibilidade, o que facilita o desenvolvimento e a manutenção do código. Por outro lado, Python possui uma ampla gama de bibliotecas e frameworks para aprendizagem de máquina e computação científica, como NumPy, scikit-learn e PyTorch, que tornam mais fácil a implementação de redes neuronais e algoritmos genéticos.
 
-Algumas suposições tiveram de ser feitas para simplificar o modelo ou torná-lo mais viável, já que nem todos os fatores que afetam o problema podem ser levados em consideração, nomeadamente:
-\begin{itemize}
-    \item A floresta tem uma dimensão fixa de 33x33 células (ou \textit{patches});
-    \item Há dois tipos de árvores na floresta: pinheiros e carvalhos;
-    \item Cada árvore tem uma probabilidade de ser incendiada pelo fogo;
-    \item Cada árvore tem uma probabilidade de criar fagulhas, que podem incendiar outras árvores;
-    \item O terreno tem uma inclinação que afeta a propagação do fogo, assumindo que o fogo sobe;
-    \item O fogo espalha-se para as células adjacentes, com uma probabilidade de se propagar;
-    \item O vento pode soprar o fogo e as fagulhas numa direção específica, independente da inclinação;
-    \item Cada célula tem uma temperatura inicial fixa, que varia com a propagação do incêndio.
-\end{itemize}
+De modo a poder comparar os resultados obtidos, o algoritmo genético foi implementado de raiz e com recurso à biblioteca PyGAD \cite{Gad2021PyGAD:Library}. PyGAD é uma biblioteca open-source, compatível com Keras e PyTorch, utilizada para construir algoritmos genéticos e otimizar algoritmos de ML. Este oferece diferentes tipos de operadores de cruzamento, mutação e seleção, permitindo a otimização de inúmeros problemas, através da personalização da função de aptidão.
 
-\section{Agentes}\label{sec:agents}
+\section{Modelo de Classificação}\label{sec:neural_net}
 
-A modelação de incêndios florestais com o uso de sistemas de agentes inteligentes envolve a criação de agentes que representem os intervenientes deste cenário, nomeadamente, as árvores da floresta, os fogos, e as fagulhas.
-
-Esses agentes interagem entre si e com o ambiente, permitindo a criação de um modelo dinâmico que simula o comportamento dos incêndios florestais.
-
-Assim, foram definidas as seguintes ``raças" (\textit{breeds}) de agentes:
-\begin{itemize}
-    \item Árvores (\textit{trees})
-    \item Fogos (\textit{fires})
-    \item Fagulhas (\textit{sparks})
-\end{itemize}
-
-Começando pelos fogos, estes foram definidos com um propósito meramente ilustrativo, de forma a poder visualizar com maior detalhe a propagação do incêndio, pelo que têm associada uma só propriedade: \texttt{life-in-ticks}, que representa o seu tempo de vida até os fogos serem destruídos.
-
-Já no caso das fagulhas, estas representam as fagulhas soltas pelas árvores incendiadas, que podem deslocar-se por grandes distâncias, dependendo da direção do vento. Assim, cada fagulha possui duas propriedades inicializadas na sua criação: \texttt{final-xcor} e \texttt{final-ycor}, que representam a posição final da fagulha onde esta poderá incendiar outras árvores.
-
-Por fim, temos os agentes de maior relevância na simulação, responsáveis pela propagação do fogo, cujo comportamento está dependente das condições climáticas iniciais e atuais da floresta: as árvores, ou \textit{trees}. Dada a complexidade destes agentes, consideramos relevante sumariar as suas propriedades na Tabela~\ref{tab:tree_props}.
-
-\begin{table}[tbhp]
-    \centering
-    \begin{tabular}{ccc} \hline
-    \textbf{Nome} & \textbf{Tipo} & \textbf{Descrição} \\ \hline
-    kind & string & tipo de árvore \\
-    ticks-since-spark & int & n.º de \textit{ticks} desde a última fagulha \\
-    is-burning & bool & se a árvore está a arder \\
-    is-burnt & bool & se a árvore já ardeu \\
-    burning-speed & float & velocidade de queima \\
-    spark-probability & float & probabilidade de gerar fagulhas \\ \hline
-    \end{tabular}
-    \caption{Propriedades das árvores}
-    \label{tab:tree_props}
-\end{table}
-
-Dependendo do tipo escolhido, a árvore pode demorar mais tempo a arder, como é o caso do carvalho, ou gerar fagulhas com maior facilidade, no caso do pinheiro devido às agulhas. Assim, estas propriedades deverão ter valores iniciais fixos associados ao tipo de árvore plantada, como se pode ver na Tabela~\ref{tab:tree_types}.
-
-\begin{table}[tbhp]
-    \centering
-    \begin{tabular}{ccc} \hline
-    \textbf{Propriedade / Tipo} & \textbf{Pinheiros} & \textbf{Carvalhos} \\ \hline
-    kind, shape & pine-tree & oak-tree \\
-    burning-speed & 0.3 & 0.1 \\
-    spark-probability & 0.15 & 0.05 \\ \hline
-    \end{tabular}
-    \caption{Tipos de árvore}
-    \label{tab:tree_types}
-\end{table}
-
-\section{Ambiente}\label{sec:environment}
-
-O ambiente de simulação, tal como é possível observar na Fig.~\ref{fig:environment}, consiste na floresta populada de pinheiros e carvalhos, representada por uma grade de células (ou \textit{patches}), em que cada célula pode conter uma ou mais árvores, um espaço vazio ou um local queimado pelo fogo.
+Tal como foi referido em \ref{chapter:problem}, e respeitando as características do dataset IRIS, a rede neuronal tem 4 neurónios na camada de entrada, 10 neurónios na camada oculta, e 3 neurónios na camada de saída, a fim de classificar as 3 espécies.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{imagens/environment.png}
-    \caption{Ambiente de simulação no NetLogo}
-    \label{fig:environment}
+        \begin{neuralnetwork}[height=5]
+        \newcommand{\x}[2]{$x_#2$}
+        \newcommand{\y}[2]{$y_#2$}
+        \newcommand{\h}[2]{\ifnum #2=4 $\cdots$ \else {\ifnum #2>4 $h_{10}$ \else $h_#2$ \fi} \fi}
+        \newcommand{\hfirst}[2]{\small $h^{(1)}_#2$}
+        \inputlayer[count=4, bias=false, title=Camada\\de entrada, text=\x]
+        \hiddenlayer[count=5, bias=false, title=Camada oculta, text=\h] \linklayers
+        \outputlayer[count=3, title=Camada\\de saída, text=\y] \linklayers
+    \end{neuralnetwork}
+    \caption{Estrutura do modelo de classificação}
+    \label{fig:neural_net}
 \end{figure}
 
-Além disso, a fim de poder retratar e avaliar diferentes cenários de incêndio, foi definido um conjunto de variáveis globais, com o recurso aos elementos gráficos do NetLogo, para representar quer propriedades da floresta em si, quer fatores ambientais que podem afetar a propagação do fogo. Entre outros, o modelo prevê os seguintes parâmetros:
+O modelo em questão é uma Fully Connected Neural Network (FCN), também conhecida por Rede Neuronal Totalmente Conectada, como se poder ver pela Fig.~\ref{fig:neural_net}. Trata-se de uma arquitetura de rede neuronal artificial na qual cada neurónio numa camada está conectado a todos os neurónios da camada seguinte - conexões totalmente conectadas ou conexões densas.
 
-\begin{itemize}
-    \item \texttt{forest-density} - a densidade da floresta, entre 0 e 100\%;
-    \item \texttt{inclination} - a inclinação do terreno, entre \ang{-60} e \ang{60}, responsável pela altitude de cada célula;
-    \item \texttt{east-wind-speed} - a velocidade do vento na direção leste (negativa se o vento soprar para o oeste), entre -25 e 25 p/t:
-    \item \texttt{north-wind-speed} - a velocidade do vento na direção norte (negativa se o vento soprar para o sul), entre -25 e 25 p/t;
-    \item \texttt{initial-temperature} - a temperatura inicial para cada célula do mundo, entre $\SI{0}{\degreeCelsius}$ e $\SI{45}{\degreeCelsius}$;
-    \item \texttt{spark-frequency} - a frequência de ocorrência das fagulhas em ticks, por omissão, 150 ticks;
-    \item \texttt{spread-probability} - a probabilidade de uma árvore ser incendiada pelo fogo, entre 0 e 100\%;
-    \item \texttt{forest-seed} - a semente para o gerador de números aleatórios, entre 0 e 500;
-    \item \texttt{current-run} - o número da \textit{run} atual de um dado cenário, entre 0 e 10;
-    \item \texttt{iterations} - a lista de entradas contendo um \textit{snapshot} do modelo no final de cada \texttt{tick}.
-\end{itemize}
+\begin{table}[htpb]
+    \centering
+    \begin{tabular}{cccc} \hline
+    Camada & Pesos & Bias & Parâmetros \\ \hline
+    Entrada (X) & 40 & 10 & 50 \\
+    Oculta (H) & 30 & 3 & 33 \\
+    Saída (Y) & - & - & - \\ \hline
+    \textbf{Total} & 50 & 33 & 83 \\ \hline
+    \end{tabular}
+    \caption{Detalhes da rede neuronal}
+    \label{tab:nn_summary}
+\end{table}
 
-Por fim, os patches também apresentam propriedades únicas, nomeadamente, \texttt{temperature} e \texttt{altitude}, que representam, respetivamente, a temperatura em cada célula à medida que o incêndio se propaga, e a altitude determinada pela inclinação do terreno.
+Assim, e de acordo com a informação disponível na Tabela~\ref{tab:nn_summary}, o modelo em questão contém um total de 83 parâmetros que podem ser otimizados pelo algoritmo genético descrito na secção seguinte.
 
-\section{Algoritmo}\label{sec:algorithm}
+\section{Algoritmo Genético}\label{sec:gen_alg}
 
 O objetivo principal deste algoritmo é fornecer uma ferramenta eficiente para modelar e prever o comportamento dos incêndios florestais, permitindo a avaliação dos efeitos de diferentes cenários na propagação do fogo. A simulação baseada em agentes é uma abordagem que considera a interação entre os elementos do ambiente e os agentes que nele atuam, permitindo a modelação de comportamentos complexos e dinâmicos. 
 
