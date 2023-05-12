@@ -13,9 +13,9 @@
 \usepackage{xcolor}
 \usepackage{siunitx}
 \usepackage{textcmds}
-\usepackage{tikz}
-\usepackage{listofitems} % for \readlist to create arrays
 \usepackage{neuralnetwork}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 
 \hypersetup{
     breaklinks=true,
@@ -45,7 +45,8 @@
 \begin{document}
 
 \begin{figure}
-\includegraphics[width=8cm]{images/utad.png}
+\includegraphics[width=8cm]{images/utad}
+\label{fig:utad_logo}
 \end{figure}
 
 \maketitle
@@ -72,7 +73,7 @@ No âmbito da Unidade Curricular de Computação Natural, foi solicitado um trab
 
 Os algoritmos genéticos (GA) são algoritmos de pesquisa baseados na mecânica da seleção natural e nos princípios da genética, que combinam a sobrevivência dos indivíduos mais aptos numa população de entidades binárias - cromossomas, com a troca estruturada e aleatória de informação (Fig.~\ref{fig:ea_flowchart}). 
 
-Em cada geração, um novo conjunto de indivíduos (sequências) é criado usando pedaços dos elementos mais aptos. Ainda que aleatórios, os  algoritmos genéticos não são uma simples \qq{caminhada} estocástica, explorando eficientemente a informação histórica para especular novos pontos de pesquisa com um desempenho esperado melhorado. \cite{Goldberg1989GeneticLearning}
+Em cada geração, um novo conjunto de indivíduos (sequências) é criado usando pedaços dos elementos mais aptos. Ainda que aleatórios, os  algoritmos genéticos não são uma simples \qq{caminhada} estocástica, explorando eficientemente a informação histórica para especular novos pontos de pesquisa com um desempenho esperado melhorado ~\cite{Goldberg1989GeneticLearning}.
 
 \begin{figure}[htbp]
 \centering
@@ -96,9 +97,9 @@ Em cada geração, um novo conjunto de indivíduos (sequências) é criado usand
 
 \section{Redes Neuronais}\label{sec:neural_nets}
 
-As Redes Neuronais Artificiais (ANNs) são modelos computacionais inspirados no funcionamento do cérebro humano, compostos por unidades de processamento, chamadas neurónios, responsáveis por receber entradas, processar informação e gerar saídas. As ANNs utilizam conexões sinápticas ajustáveis para aprender com os dados de entrada. \cite{Lippmann1988AnNets}
+As Redes Neuronais Artificiais (ANNs) são modelos computacionais inspirados no funcionamento do cérebro humano, compostos por unidades de processamento, chamadas neurónios, responsáveis por receber entradas, processar informação e gerar saídas. As ANNs utilizam conexões sinápticas ajustáveis para aprender com os dados de entrada~\cite{Lippmann1988AnNets}.
 
-Essas redes possuem a capacidade de aprender por meio de exemplos e generalizar esse conhecimento para novos dados. Por essa razão, elas são amplamente utilizadas em diversas áreas, como reconhecimento de padrões, classificação, previsão, processamento de imagens, entre outras. \cite{Jain1996ArtificialTutorial}
+Essas redes possuem a capacidade de aprender por meio de exemplos e generalizar esse conhecimento para novos dados. Por essa razão, elas são amplamente utilizadas em diversas áreas, como reconhecimento de padrões, classificação, previsão, processamento de imagens, entre outras~\cite{Jain1996ArtificialTutorial}.
 
 Atualmente, as ANNs são consideradas ferramentas fundamentais para aprendizagem de máquina (ML) e inteligência artificial (AI), com inúmeras aplicações práticas em saúde, finanças, indústria e outros setores.
 
@@ -110,7 +111,7 @@ A crescente popularidade das ANNs na década de 80 potenciou o surgimento de nov
     \item a necessidade de diferenciabilidade no cálculo dos gradientes, que impede o seu uso em certos tipos de nós e critérios de otimização não-diferenciáveis.
 \end{itemize}
 
-Para superar essas limitações, Montana e Davis \cite{Montana1989} propuseram um algoritmo genético capaz de codificar os pesos duma rede neuronal \textit{feed-forward} (FNN) numa lista de números reais, utilizando uma função de \textit{fitness} para avaliar o desempenho da rede, e incorporando operadores de mutação, cruzamento e gradiente para gerar novas soluções. 
+Para superar essas limitações, Montana e Davis~\cite{Montana1989} propuseram um algoritmo genético capaz de codificar os pesos duma rede neuronal \textit{feed-forward} (FNN) numa lista de números reais, utilizando uma função de \textit{fitness} para avaliar o desempenho da rede, e incorporando operadores de mutação, cruzamento e gradiente para gerar novas soluções. 
 
 Montana e Davis realizaram múltiplas experiências usando uma base de dados de imagens de energia acústica, e compararam o desempenho do algoritmo genético com o da retropropagação. Os resultados mostraram que o GA superou o BP em termos de velocidade de treino e capacidade de lidar com nós e critérios de otimização, provando os GAs como uma alternativa eficaz à retropropagação, especialmente em problemas complexos e não diferenciáveis.
 
@@ -120,7 +121,7 @@ O treino de redes neuronais é um processo fundamental para obter um desempenho 
 
 Nesse contexto, técnicas como os algoritmos genéticos (GAs) têm mostrado eficácia na otimização dos parâmetros das redes neuronais. Os GAs combinam conceitos da teoria da evolução biológica, como a seleção natural, o cruzamento e a mutação, para explorar o espaço de pesquisa de forma eficiente. Estas técnicas permitem encontrar conjuntos de parâmetros que maximizem o desempenho da rede neuronal, melhorando a precisão das classificações e tornando-a mais adaptável a diferentes conjuntos de dados.
 
-O objetivo do presente trabalho consiste em desenvolver um algoritmo genético capaz de encontrar os pesos ideais de uma rede neuronal, de modo a maximizar o seu desempenho na classificação de flores do género Iris \textit{L.}, recorrendo ao dataset Iris \cite{Fisher1988}. 
+O objetivo do presente trabalho consiste em desenvolver um algoritmo genético capaz de encontrar os pesos ideais de uma rede neuronal, de modo a maximizar o seu desempenho na classificação de flores do género Iris \textit{L.}, recorrendo ao dataset Iris~\cite{Fisher1988}.
 
 A rede neuronal em questão deverá ter a seguinte estrutura:
 \begin{itemize}
