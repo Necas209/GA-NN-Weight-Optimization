@@ -66,6 +66,7 @@ class GeneticAlgorithm:
         # Initialize population
         num_params = compute_num_params(self.model)
         population: Population = np.random.uniform(low=-1, high=1, size=(self.population_size, num_params))
+        scores: list[float] = []
         # Run for num_generations
         for gen in range(self.num_generations):
             # Select parents
@@ -89,8 +90,9 @@ class GeneticAlgorithm:
             # Save fitness score of best solution
             self.fitness_scores.append(self.best_score)
             # Print generation info
-            if gen % self.on_generation_interval == 0 or gen == self.num_generations - 1:
+            if gen % self.on_generation_interval == 0:
                 self.on_generation(gen, scores)
+        self.on_generation(self.num_generations - 1, scores)
 
     def plot_fitness(self) -> None:
         """ Plots the fitness of the best solution over time """
