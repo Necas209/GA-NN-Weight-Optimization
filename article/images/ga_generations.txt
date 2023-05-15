@@ -1,0 +1,13 @@
+Generation: 000 Best fitness: 1.5433719701 Average fitness: 0.7456111161 Worst fitness: 0.3869804614
+Generation: 050 Best fitness: 3.2446750755 Average fitness: 2.8953651866 Worst fitness: 2.5158817894
+Generation: 100 Best fitness: 4.6345184663 Average fitness: 4.1108275911 Worst fitness: 3.6450487630
+Generation: 150 Best fitness: 6.5672342767 Average fitness: 5.9685807182 Worst fitness: 5.3553919008
+Generation: 200 Best fitness: 8.3287108567 Average fitness: 7.0848136781 Worst fitness: 3.4031687845
+Generation: 250 Best fitness: 12.6944537912 Average fitness: 11.0748490952 Worst fitness: 9.8534413135
+Generation: 300 Best fitness: 15.1424719381 Average fitness: 12.3759145992 Worst fitness: 9.4984964174
+Generation: 350 Best fitness: 17.7112536249 Average fitness: 15.5143250450 Worst fitness: 10.0451293478
+Generation: 400 Best fitness: 20.0449864118 Average fitness: 18.0141691243 Worst fitness: 13.2955562995
+Generation: 450 Best fitness: 20.8989814569 Average fitness: 18.3574158359 Worst fitness: 14.4692224703
+Generation: 500 Best fitness: 22.5146651509 Average fitness: 20.4132154353 Worst fitness: 16.1544025131
+Generation: 550 Best fitness: 23.0057185536 Average fitness: 20.6927268084 Worst fitness: 16.8188145160
+Generation: 599 Best fitness: 24.0492927083 Average fitness: 22.3070804665 Worst fitness: 17.9997238495
