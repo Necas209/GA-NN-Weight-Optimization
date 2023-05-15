@@ -47,154 +47,133 @@ Assim, e segundo a informação disponível na Tabela~\ref{tab:nn_summary}, o mo
 
 \section{Algoritmo Genético}\label{sec:gen_alg}
 
-O objetivo do algoritmo genético desenvolvido é encontrar os pesos ideais de uma rede neuronal para maximizar seu desempenho na classificação de flores do género Iris. O algoritmo utiliza conceitos da teoria da evolução biológica, como a seleção natural, o cruzamento e a mutação, para explorar de forma eficiente o espaço de pesquisa dos parâmetros da rede neuronal.
+O algoritmo genético desenvolvido, intitulado \texttt{GeneticAlgorithm} e descrito em anexo~\ref{ch:appendix}, apresenta os seguintes atributos configuráveis:
 
-A seguir, serão apresentados detalhes do funcionamento do algoritmo e como ele foi implementado para atender aos objetivos.
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{ccc} \hline
+        \textbf{Nome} & \textbf{Tipo} & \textbf{Por omissão} \\ \hline
+        \texttt{model} & \texttt{nn.Module} & - \\
+        \texttt{population\_size} & \texttt{int} & 10 \\
+        \texttt{mutation\_rate} & \texttt{float} & 0.05 \\
+        \texttt{neuron\_off\_rate} & \texttt{float} & $10^{-3}$ \\
+        \texttt{crossover\_rate} & \texttt{float} & 0.95 \\
+        \texttt{elitism} & \texttt{bool} & \texttt{True} \\
+        \texttt{num\_generations} & \texttt{int} & 100 \\
+        \texttt{on\_generation\_interval} & \texttt{int} & 10 \\
+        \texttt{best\_score} & \texttt{float} & 0.0 \\
+        \texttt{best\_solution} & \texttt{np.ndarray} & \texttt{None} \\
+        \texttt{fitness\_scores} & \texttt{list[float]} & - \\
+        \texttt{fitness\_fn} & \texttt{Callable} & \texttt{None} \\
+        \texttt{on\_generation} & \texttt{Callable} & \texttt{None} \\ \hline
+    \end{tabular}
+    \caption{Parâmetros do algoritmo genético}
+    \label{tab:ga_params}
+\end{table}
 
-O algoritmo começará com uma população inicial de conjuntos de pesos para a rede neural. Cada conjunto de pesos representa uma solução candidata. A população é avaliada usando uma função de aptidão que mede o desempenho da rede neural na classificação das flores do gênero Iris.
+O método \texttt{run}, detalhado em Alg.~\ref{alg:ga_run}, é responsável pela execução do algoritmo genético por um determinado número de gerações, de acordo com os parâmetros fornecidos na instanciação do mesmo.
 
-Em cada iteração do algoritmo genético, as soluções candidatas mais aptas são selecionadas para reprodução. Isso é feito com base na função de aptidão, onde soluções com desempenho melhor têm maior probabilidade de serem selecionadas. Os indivíduos selecionados são cruzados para gerar descendentes, combinando características de ambos os pais.
+Inicialmente, a população de pesos é inicializada aleatoriamente de acordo com o tamanho desejado e o número de parâmetros do modelo a otimizar. De seguida, é executado o ciclo principal, que inclui as seguintes etapas:
+\begin{itemize}
+    \item Seleção dos pais: Os pais são selecionados a partir da população atual, usando o método \texttt{select\_parents};
+    \item Cruzamento: A informação genética dos pais é combinada usando o operador de cruzamento definido no método \texttt{crossover};
+    \item Mutação: A informação genética dos filhos sofre alterações usando o método \texttt{mutate}, podendo ser modificada ou anulada (desligar a conexão);
+    \item Atualização da população: A população atual é substituída pelos filhos;
+    \item Preservação do melhor indivíduo: O melhor indivíduo é preservado usando elitismo, substituindo o pior indivíduo na população;
+    \item Armazenamento da aptidão: A aptidão do melhor indivíduo é armazenada na lista de melhores aptidões para posterior análise;
+    \item Chamada da função \texttt{on\_generation}: Se a geração for múltipla do intervalo de gerações especificado, a função \texttt{on\_generation} é chamada para fornecer informações sobre o estado atual do algoritmo genético.
+\end{itemize}
 
-Além do cruzamento, o algoritmo também aplicará operações de mutação nos descendentes. A mutação introduzirá pequenas alterações aleatórias nos conjuntos de pesos, permitindo a exploração de novas regiões do espaço de busca. Essa diversidade ajuda a evitar que o algoritmo fique preso em mínimos locais e permite uma exploração mais abrangente.
+O operador de seleção, definido em Alg.~\ref{alg:select_parents}, utiliza um processo chamado seleção proporcional à aptidão (ou seleção por roleta) para escolher os pais da próxima geração, no qual é atribuída uma probabilidade de seleção a cada indivíduo com base na sua aptidão relativa. Quanto maior a aptidão de um indivíduo, maior a probabilidade de ele ser selecionado. Este processo é repetido até que pares suficientes de pais sejam selecionados para a reprodução.
 
-Após a reprodução e mutação, os descendentes substituirão parte da população anterior, mantendo o tamanho da população constante. Esse processo é repetido por várias gerações, permitindo que o algoritmo explore e refine gradualmente o espaço de busca em busca dos pesos ideais.
-
-O critério de parada do algoritmo pode ser um número fixo de gerações ou a convergência do desempenho da rede neural em um determinado limiar pré-definido. Uma vez que o algoritmo tenha convergido ou atingido o critério de parada, a melhor solução encontrada, ou seja, o conjunto de pesos com o melhor desempenho, será selecionado como a solução final.
-
-Portanto, o objetivo do algoritmo genético é utilizar os princípios da evolução para encontrar os pesos ideais da rede neural, maximizando seu desempenho na classificação de flores do gênero Iris.
-
-\SetKwFunction{calcAltitude}{calcAltitude}
 \SetKwFunction{random}{random}
-\SetKwFunction{plantTree}{plantTree}
-
+\SetKwFunction{selectParents}{selectParents}
+\SetKwFunction{crossover}{crossover}
+\SetKwFunction{mutate}{mutate}
+\SetKwFunction{calculateScores}{calculateScores}
+\SetKwFunction{max}{max}
+\SetKwFunction{min}{min}
+\SetKwFunction{onGeneration}{onGeneration}
 \begin{algorithm}
-    \caption{Criação da floresta (\texttt{createForest})}\label{alg:create_forest}
-    $sparkFrequency \gets 150$\;
-    $seed \gets forestSeed$\;
-    \For{$patch \in patches$}{
-        $altitude \gets \calcAltitude{pxcor}$\;
-        $temperature \gets initialTemperature$\;
-        \If{\random{$0, 100$} $<$ forestDensity}{
-            \plantTree{pxcor, pycor}\;
+    \caption{Execução do algoritmo genético (\texttt{run})}\label{alg:ga_run}
+    $population \gets \random{populationSize, model.numParams}$\;
+    \For{$generation \gets 0$ \KwTo $numGenerations$}{
+        $parents \gets \selectParents{population}$\;
+        $children \gets \mutate{\crossover{parents}}$\;
+        $population \gets children$\;
+        $scores \gets \calculateScores{population}$\;
+        $(maxScore, maxScoreIdx) \gets \max{scores}$\;
+        \If{$maxScore > bestScore$}{
+            $bestScore \gets maxScore$\;
+            $bestSolution \gets population[maxScoreIdx]$\;
+        }
+        \If{$elitism$}{
+            $(\_, minScoreIdx) \gets \min{scores}$\;
+            $population[minScoreIdx] \gets bestSolution$\;
+        }
+        $fitnessScores.add(bestScore)$\;
+        \If{$generation$ $\%$ $onGenerationInterval == 0$}{
+            $\onGeneration{generation, scores}$\;
         }
     }
 \end{algorithm}
 
-Em Alg.~\ref{alg:create_forest}, encontra-se detalhado o processo de população da floresta.
-Este começa por definir a frequência, em ticks, de criação de fagulhas, seguido da atribuição da \textit{seed} responsável pela distribuição de árvores, bem como pela criação do fogo.
-A cada célula é atribuída uma altitude dependente da sua posição, bem como uma temperatura inicial escolhida pelo utilizador.
-Também, segundo a densidade da floresta, são plantadas árvores nos diferentes patches.
+\begin{listing}[!ht]
+\begin{minted}{python}
+def select_parents(self, population: Population) -> Population:
+    scores = self.calculate_scores(population)
+    normalized_scores = scores / np.sum(scores)
+    parent_indices = np.random.choice(
+        range(self.population_size),
+        size=(self.population_size // 2, 2),
+        replace=True,
+        p=normalized_scores
+    )
+    parents = population[parent_indices]
+    return parents
+\end{minted}
+\caption{Operador de seleção}
+\label{alg:select_parents}
+\end{listing}
 
-\SetKwFunction{ignite}{ignite}
-\SetKwFunction{saveConfig}{saveConfig}
-\SetKwFunction{anyTreesBurning}{anyTreesBurning}
-\SetKwFunction{saveIteration}{saveIteration}
-\SetKwFunction{saveIterations}{saveIterations}
-\SetKwFunction{fire}{fire}
+No caso do operador de cruzamento, definido em Alg.~\ref{alg:crossover}, é utilizada a técnica de cruzamento num único ponto, ou \qq{single point crossover}. Nessa técnica, um ponto de cruzamento é escolhido aleatoriamente e o material genético é trocado entre os pais até esse ponto, resultando nos filhos. A probabilidade de ocorrer cruzamento é determinada pelo valor de \texttt{crossover\_rate}. Esse processo é repetido para cada par de pais, gerando o par correspondente de filhos.
 
-\begin{algorithm}
-    \caption{Criação do fogo inicial (\texttt{startFire})}\label{alg:start_fire}
-    $patch \gets \random(patches)$\;
-    \ignite{patch}\;
-    \saveConfig{}\;
-    $seed \gets \random{seeds}$\;
-    \While{\anyTreesBurning{}}{
-        \saveIteration{}\;
-        \fire{}\;
-    }
-    \saveIterations{}\;
-\end{algorithm}
+\begin{listing}[!ht]
+\begin{minted}{python}
+def crossover(self, parents1: Population, parents2: Population):
+    sh = parents1.shape
+    cross_pts = np.random.randint(1, sh[1], size=sh[0])
+    mask = np.random.random(size=sh) < self.crossover_rate
+    crossover_mask = np.arange(sh[1]) < cross_pts[:, np.newaxis]
+    mask = np.logical_and(mask, crossover_mask)
+    child1 = parents1 * np.logical_not(mask) + parents2 * mask
+    child2 = parents2 * np.logical_not(mask) + parents1 * mask
+    children = np.concatenate((child1, child2), axis=0)
+    return children
+\end{minted}
+\caption{Operador de cruzamento}
+\label{alg:crossover}
+\end{listing}
 
-Com a floresta plantada, resta criar o fogo inicial, tal como se pode ver em Alg.~\ref{alg:start_fire}.
-Começa-se por escolher aleatoriamente um ‘patch’, no qual é criada a primeira chama.
-A seguir, são salvas as configurações do cenário em ficheiro YAML, e reiniciada a \textit{seed}.
-O modelo entra num ciclo condicional, responsável por salvar o estado do modelo em cada iteração e de propagar o incêndio.
-Após o fim do ciclo, são guardados em ficheiro CSV os resultados das iterações.
 
-\SetKwFunction{spreadFire}{spreadFire}
-\SetKwFunction{canSpark}{canSpark}
-\SetKwFunction{createSpark}{createSpark}
-\SetKwFunction{forward}{forward}
-\SetKwFunction{fadeEmbers}{fadeEmbers}
-\SetKwFunction{tick}{tick}
-\SetKwFunction{create}{create}
+Por fim, o operador de mutação, definido em Alg.~\ref{alg:mutate}, atua sobre a população de filhos, onde alguns neurónios são desativados (definidos como 0), e alguns parâmetros sofrem mutação adicionando valores aleatórios extraídos de uma distribuição normal com $\mu=0$ e $\sigma=0.1$. Isso introduz variabilidade e diversidade genética na população de filhos.
 
-\begin{algorithm}
-    \caption{Evolução do incêndio (\texttt{fire})}\label{alg:fire}
-    \For{$tree \in trees$}{
-    \If{isBurning}{
-    \If{$color < ``yellow"$}{
-        \spreadFire{neighbors, altitude}\;
-    }
-    \If{$color < ``brown"$}{
-    \If{$\random{$0, 1$} < sparkProbability$ {\bf and} $ticksSinceSpark > sparkFrequency$}{
-\create{spark}\;
-$ticksSinceSpark \gets 0$\;
-}
-\Else{
-$ticksSinceSpark \gets ticksSinceSpark + 1$\;
-}
-}
-}
-}
-\For{$spark \in sparks$}{
-\If{$position \neq finalPosition$}{
-\forward{$0.1$}\;
-}
-\Else{
-\ignite{patch-here}\;
-}
-}
-\fadeEmbers{}\;
-\tick{}\;
-\end{algorithm}
+\begin{listing}[!ht]
+\begin{minted}{python}
+def mutate(self, children: Population) -> Population:
+    mask_off = (np.random.random(size=children.shape) 
+                < self.neuron_off_rate)
+    mask_mutate = (np.random.random(size=children.shape) 
+                   < self.mutation_rate)
+    children[mask_off] = 0.0
+    children[mask_mutate] += np.random.normal(scale=0.1, 
+        size=np.sum(mask_mutate))
+    return children
+\end{minted}
+\caption{Operador de mutação}
+\label{alg:mutate}
+\end{listing}
 
-O Algoritmo~\ref{alg:fire} representa o algoritmo responsável pela evolução do incêndio ao longo da execução do modelo. Em cada tick, as árvores a arder espalham o fogo para as células vizinhas e geram fagulhas, segundo uma certa probabilidade, de acordo com a cor das suas folhas - esta representa o estado da árvore, mais ou menos queimada. Já as fagulhas movem-se em direção à sua posição final, na qual incendeiam as árvores presentes. Por fim, o estado de queima das árvores é atualizado com o procedimento \texttt{fadeEmbers}, responsável por alterar as propriedades da árvore, em particular a sua cor.
 
-\begin{algorithm}
-\caption{Ignição do fogo (\texttt{ignite})}\label{alg:ignite}
-\create{fire}\;
-\For{$tree \in trees{-}here$}{
-\If{{\bf not} ($isBurning$ {\bf and} $isBurnt$)}{
-$isBurning \gets true$\;
-}
-}
-\end{algorithm}
+\section{Execução}\label{sec:execution}
 
-Para incendiar as árvores, recorremos ao procedimento \texttt{ignite}, definido em Alg.~\ref{alg:ignite}. Este algoritmo é responsável por criar um agente \textit{fire} na célula atual, bem como de incendiar quaisquer árvores que não estejam a arder na mesma.
-
-\SetKwFunction{towards}{towards}
-\SetKwFunction{meanTemperature}{meanTemperature}
-
-\begin{algorithm}
-\caption{Propagação do fogo (\texttt{spreadFire})}\label{alg:spread_fire}
-\KwIn{fireAltitude}
-$probability \gets spreadProbability$\;
-$direction \gets \towards{this}$\;
-\Switch{direction}{
-\Case{\ang{0}}{
-$probability \gets probability - northWindSpeed$\;
-}
-\Case{\ang{90}}{
-$probability \gets probability - eastWindSpeed$\;
-}
-\Case{\ang{180}}{
-$probability \gets probability + northWindSpeed$\;
-}
-\Case{\ang{270}}{
-$probability \gets probability + eastWindSpeed$\;
-}
-}
-$meanTemp \gets \meanTemperature{neighbors}$\;
-$probability \gets probability + \ln^2{(meanTemp + 1)}$\;
-\If{$fireAltitude > altitude$}{
-$probability \gets probability\cdot(1+|\tan(\frac{inclination}{3})|)$\;
-}
-\If{\random{$0, 100$} $<$ probability}{
-\ignite{patch-here}\;
-}
-\end{algorithm}
-
-Por fim, temos o algoritmo responsável pela propagação do fogo em si, retratado em Alg.~\ref{alg:spread_fire}. Começa-se por determinar a direção do fogo em relação à célula atual, e por inicializar a probabilidade de propagação com o valor definido pelo utilizador no início do programa. De seguida, consoante a direção do vento, ajusta-se adequadamente esta, tal que o mesmo possa contribuir, positiva ou negativamente para essa propagação. Segue-se o cálculo da temperatura média nas células vizinhas, que é igualmente usada para modificar novamente a propriedade (quanto mais quente estiver o ambiente em redor, melhor se propaga o fogo). Por fim, e porque o fogo tende a subir, quando enfrenta terrenos íngremes, a probabilidade é alterada uma última vez para refletir a inclinação do terreno. Termina-se por incendiar a célula presente, segundo o valor final da probabilidade de propagação.
-
-Todos os detalhes da implementação do modelo de simulação em NetLogo, bem como do módulo desenvolvido em Python para o processamento dos resultados, podem ser consultados no Apêndice~\ref{ch:appendix}.

@@ -1,13 +1,15 @@
 \documentclass[a4paper, portuguese]{report}
 
+\usepackage[portuguese]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[ruled]{algorithm2e}
 \usepackage{cite}
 \usepackage{comment}
 \usepackage{graphicx}
 \usepackage{parskip}
-\usepackage{minted}
+\usepackage[outputdir=../]{minted}
 \usepackage{titlesec}
-\usepackage[portuguese]{babel}
 \usepackage[hyphens]{url}
 \usepackage[hidelinks,pdfusetitle]{hyperref}
 \usepackage{xcolor}
@@ -15,8 +17,9 @@
 \usepackage{textcmds}
 \usepackage{neuralnetwork}
 \usepackage{tikz}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+
+\renewcommand\listingscaption{Excerto de código}
+\renewcommand\listoflistingscaption{Lista de Excertos de Código}
 
 \hypersetup{
     breaklinks=true,
@@ -64,8 +67,6 @@
     \tableofcontents
     \listoffigures
     \listoftables
-    \listofalgorithms
-
 
     \chapter{Introdução}\label{ch:introduction}
     \input{article/introduction}
@@ -128,8 +129,8 @@
 
 
     \section{Especificação do algoritmo genético}\label{sec:model_spec}
-    \inputminted[breaklines]{python}{src/genalg.py}
+    \inputminted[breaklines]{python}{../src/genalg.py}
     \bibliographystyle{IEEEtran}
-    \bibliography{article/references}
+    \bibliography{references}
 \end{document}
 
