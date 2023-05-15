@@ -9,6 +9,10 @@ ModelParams = np.ndarray[tuple[int], np.dtype[np.float64]]
 Population = np.ndarray[tuple[int, int], np.dtype[np.float64]]
 
 
+def compute_num_params(model: nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
 @dataclass
 class GeneticAlgorithm:
     model: nn.Module
@@ -25,11 +29,7 @@ class GeneticAlgorithm:
     fitness_fn: Callable[[ModelParams], float] = None
     on_generation: Callable[[int, list[float]], None] = None
 
-    @property
-    def num_params(self) -> int:
-        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
-
-    def crossover(self, parents1: Population, parents2: Population) -> tuple[Population, Population]:
+    def crossover(self, parents1: Population, parents2: Population) -> Population:
         num_parents, num_params = parents1.shape
         crossover_points = np.random.randint(1, num_params, size=num_parents)
         mask = np.random.random(size=parents1.shape) < self.crossover_rate
@@ -37,7 +37,8 @@ class GeneticAlgorithm:
         mask = np.logical_and(mask, crossover_mask)
         child1 = parents1 * np.logical_not(mask) + parents2 * mask
         child2 = parents2 * np.logical_not(mask) + parents1 * mask
-        return child1, child2
+        children = np.concatenate((child1, child2), axis=0)
+        return children
 
     def mutate(self, children: Population) -> Population:
         mask_off = np.random.random(size=children.shape) < self.neuron_off_rate
@@ -46,7 +47,7 @@ class GeneticAlgorithm:
         children[mask_mutate] += np.random.normal(scale=0.1, size=np.sum(mask_mutate))
         return children
 
-    def select_parents(self, population: Population) -> tuple[Population, Population]:
+    def select_parents(self, population: Population) -> Population:
         scores = self.calculate_scores(population)
         normalized_scores = scores / np.sum(scores)
         parent_indices = np.random.choice(
@@ -55,27 +56,25 @@ class GeneticAlgorithm:
             replace=True,
             p=normalized_scores
         )
-        parents1 = population[parent_indices[:, 0]]
-        parents2 = population[parent_indices[:, 1]]
-        return parents1, parents2
+        parents = population[parent_indices]
+        return parents
 
     def calculate_scores(self, population: Population) -> list[float]:
         return [self.fitness_fn(individual) for individual in population]
 
     def run(self) -> None:
         # Initialize population
-        population: Population = np.random.uniform(low=-1, high=1, size=(self.population_size, self.num_params))
+        num_params = compute_num_params(self.model)
+        population: Population = np.random.uniform(low=-1, high=1, size=(self.population_size, num_params))
         # Run for num_generations
         for gen in range(self.num_generations):
             # Select parents
-            parents1, parents2 = self.select_parents(population)
+            parents = self.select_parents(population)
             # Vectorized crossover and mutation
-            child1, child2 = self.crossover(parents1, parents2)
-            child1_mutated = self.mutate(child1)
-            child2_mutated = self.mutate(child2)
+            children = self.crossover(parents[:, 0], parents[:, 1])
+            children_mutated = self.mutate(children)
             # Update population
-            population[::2] = child1_mutated
-            population[1::2] = child2_mutated
+            population = children_mutated
             # Preserve the best individual using elitism
             scores = self.calculate_scores(population)
             max_score = np.max(scores)
@@ -105,4 +104,3 @@ class GeneticAlgorithm:
         """ Prints a summary of the best solution """
         print(f"Best solution fitness: {self.best_score}")
         print(f"Best solution: {self.best_solution}")
-        print(f"Model parameters: {self.num_params}")
