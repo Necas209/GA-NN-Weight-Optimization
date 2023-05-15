@@ -47,11 +47,21 @@ Assim, e segundo a informação disponível na Tabela~\ref{tab:nn_summary}, o mo
 
 \section{Algoritmo Genético}\label{sec:gen_alg}
 
-O objetivo principal deste algoritmo é fornecer uma ferramenta eficiente para modelar e prever o comportamento dos incêndios florestais, permitindo a avaliação dos efeitos de diferentes cenários na propagação do fogo.
-A simulação baseada em agentes é uma abordagem que considera a interação entre os elementos do ambiente e os agentes que nele atuam, permitindo a modelação de comportamentos complexos e dinâmicos.
+O objetivo do algoritmo genético desenvolvido é encontrar os pesos ideais de uma rede neuronal para maximizar seu desempenho na classificação de flores do género Iris. O algoritmo utiliza conceitos da teoria da evolução biológica, como a seleção natural, o cruzamento e a mutação, para explorar de forma eficiente o espaço de pesquisa dos parâmetros da rede neuronal.
 
-O algoritmo descrito aqui considera fatores como topografia, vento, temperatura, a estrutura da comunidade vegetal e outros elementos relevantes para o comportamento do fogo.
 A seguir, serão apresentados detalhes do funcionamento do algoritmo e como ele foi implementado para atender aos objetivos.
+
+O algoritmo começará com uma população inicial de conjuntos de pesos para a rede neural. Cada conjunto de pesos representa uma solução candidata. A população é avaliada usando uma função de aptidão que mede o desempenho da rede neural na classificação das flores do gênero Iris.
+
+Em cada iteração do algoritmo genético, as soluções candidatas mais aptas são selecionadas para reprodução. Isso é feito com base na função de aptidão, onde soluções com desempenho melhor têm maior probabilidade de serem selecionadas. Os indivíduos selecionados são cruzados para gerar descendentes, combinando características de ambos os pais.
+
+Além do cruzamento, o algoritmo também aplicará operações de mutação nos descendentes. A mutação introduzirá pequenas alterações aleatórias nos conjuntos de pesos, permitindo a exploração de novas regiões do espaço de busca. Essa diversidade ajuda a evitar que o algoritmo fique preso em mínimos locais e permite uma exploração mais abrangente.
+
+Após a reprodução e mutação, os descendentes substituirão parte da população anterior, mantendo o tamanho da população constante. Esse processo é repetido por várias gerações, permitindo que o algoritmo explore e refine gradualmente o espaço de busca em busca dos pesos ideais.
+
+O critério de parada do algoritmo pode ser um número fixo de gerações ou a convergência do desempenho da rede neural em um determinado limiar pré-definido. Uma vez que o algoritmo tenha convergido ou atingido o critério de parada, a melhor solução encontrada, ou seja, o conjunto de pesos com o melhor desempenho, será selecionado como a solução final.
+
+Portanto, o objetivo do algoritmo genético é utilizar os princípios da evolução para encontrar os pesos ideais da rede neural, maximizando seu desempenho na classificação de flores do gênero Iris.
 
 \SetKwFunction{calcAltitude}{calcAltitude}
 \SetKwFunction{random}{random}
@@ -187,4 +197,4 @@ $probability \gets probability\cdot(1+|\tan(\frac{inclination}{3})|)$\;
 
 Por fim, temos o algoritmo responsável pela propagação do fogo em si, retratado em Alg.~\ref{alg:spread_fire}. Começa-se por determinar a direção do fogo em relação à célula atual, e por inicializar a probabilidade de propagação com o valor definido pelo utilizador no início do programa. De seguida, consoante a direção do vento, ajusta-se adequadamente esta, tal que o mesmo possa contribuir, positiva ou negativamente para essa propagação. Segue-se o cálculo da temperatura média nas células vizinhas, que é igualmente usada para modificar novamente a propriedade (quanto mais quente estiver o ambiente em redor, melhor se propaga o fogo). Por fim, e porque o fogo tende a subir, quando enfrenta terrenos íngremes, a probabilidade é alterada uma última vez para refletir a inclinação do terreno. Termina-se por incendiar a célula presente, segundo o valor final da probabilidade de propagação.
 
-Todos os detalhes da implementação do modelo de simulação em NetLogo, bem como do módulo desenvolvido em Python para o processamento dos resultados, podem ser consultados no Apêndice~\ref{chapter:appendix}.
+Todos os detalhes da implementação do modelo de simulação em NetLogo, bem como do módulo desenvolvido em Python para o processamento dos resultados, podem ser consultados no Apêndice~\ref{ch:appendix}.
