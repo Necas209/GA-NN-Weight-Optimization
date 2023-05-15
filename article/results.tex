@@ -1,29 +1,27 @@
-Neste capítulo serão apresentados e analisados os resultados da execução do algorithmo genético, descrito na Sec.~\ref{sec:gen_alg}, para a otimização do modelo de classificação, descrito na Sec.~\ref{sec:neural_net}\, bem como os resultados obtidos com a biblioteca PyGAD\@.
+Neste capítulo serão apresentados e analisados os resultados da execução do algorithmo genético, descrito na Sec.~\ref{sec:gen_alg}, para a otimização do modelo de classificação, descrito na Sec.~\ref{sec:neural_net}, bem como os resultados obtidos com a biblioteca PyGAD\@.
 
-Com o auxílio da biblioteca scikit-learn, foi possível carregar o dataset IRIS usando a função \texttt{load\_iris()}\, normalizá-lo com a classe \texttt{StandardScaler}\, e dividi-lo em conjuntos de treino e teste, com a função \texttt{train\_test\_split()}\, segundo a proporção 90/10.
-Após a divisão, os conjuntos de treino e teste foram convertidos em \texttt{Tensors} do PyTorch, de modo a serem utilizados pelo modelo de classificação.
+Com o auxílio da biblioteca \texttt{scikit-learn}, foi possível carregar o dataset IRIS usando a função \texttt{load\_iris}, normalizá-lo com a classe \texttt{StandardScaler}, e dividi-lo em conjuntos de treino e teste, com a função \texttt{train\_test\_split}, segundo a proporção 90/10.
+Após a divisão, os conjuntos de treino e teste foram convertidos em \texttt{Tensors} do PyTorch, de modo a poderem ser utilizados pelo modelo de classificação.
 
-A seguir, foi criado um modelo de classificação, com a estrutura descrita na Sec.~\ref{sec:neural_net}\, com a função de ativação \texttt{ReLU} na camada oculta,
-e definido o critério de erro como \texttt{CrossEntropyLoss}\, dado que se trata de um problema de classificação multiclasse.
-Foi também definida a função \textttt{load_params}\, responsável por atualizar os pesos do modelo com os valores passados como argumento, e a função \texttt{fitness}\.
+A seguir, foi criado um modelo de classificação, com a estrutura descrita na Sec.~\ref{sec:neural_net}, com a função de ativação \texttt{ReLU} na camada oculta,
+e definido o critério de erro como \texttt{CrossEntropyLoss}, dado se tratar de um problema de classificação multiclasse. 
 
-No que diz respeito ao algoritmo genético, foram definidos os parâmetros apresentados na Tabela~\ref{tab:ga_param_values}\, e criada a função de aptidão, que recebe como argumento um vetor de parâmetros, e retorna o inverso da função de erro, calculada com base no conjunto de treino.
-Também foi definida a função de \textit{on\_generation}\, chamada a cada geração, que imprime os valores da melhor, pior e aptidão média da população.
-Na Tabela~\ref{tab:ga_param_values}\, é também possível observar os valores dos parâmetros utilizados na biblioteca PyGAD\@.
+Foram definidas as funções \texttt{load\_params}, responsável por atualizar os pesos do modelo com os valores passados como argumento, a função de aptidão, que recebe como argumento um vetor de parâmetros, e retorna o inverso da função de erro, calculada com base no conjunto de treino, e a função de \textit{on\_generation}, chamada a cada geração, que imprime os valores da melhor, pior e aptidão média da população.
 
+Por fim, o algoritmo foi instanciado com os os parâmetros apresentados na Tabela~\ref{tab:ga_param_values}, que também contém os valores utilizados na biblioteca PyGAD\@.
 \begin{table}[htbp]
     \centering
-    \begin{tabular}{cc}
+    \begin{tabular}{ccc}
         \hline
         \textbf{Parâmetro} & \textbf{GeneticAlgorithm} & \textbf{PyGAD} \\
         \hline
         Tamanho da população & 30 & 10 \\
-        Número de gerações & 600 & 20 \\
+        Número de gerações & 600 & 200 \\
+        Intervalo de gerações & 50 & - \\
         Probabilidade de mutação & 0.05 & - \\
         Probabilidade de \textit{crossover} & 0.95 & - \\
         Probabilidade de desconexão & $10^{-4}$ & - \\
         Elitismo & \texttt{True} & \texttt{True} \\
-        Intervalo de gerações & 50 & 1 \\
         \hline
     \end{tabular}
     \caption{Valores dos parâmetros do algoritmo genético}

@@ -37,10 +37,6 @@ De seguida, é executado o ciclo principal, que inclui as seguintes etapas:
     \item Chamada da função \texttt{on\_generation}: Se a geração for múltipla do intervalo de gerações especificado, a função \texttt{on\_generation} é chamada para fornecer informações sobre o estado atual do algoritmo genético.
 \end{itemize}
 
-O operador de seleção, definido em Alg.~\ref{alg:select_parents}, utiliza um processo chamado seleção proporcional à aptidão (ou seleção por roleta) para escolher os pais da próxima geração, no qual é atribuída uma probabilidade de seleção a cada indivíduo com base na sua aptidão relativa.
-Quanto maior a aptidão de um indivíduo, maior a probabilidade de ele ser selecionado.
-Este processo é repetido até que pares suficientes de pais sejam selecionados para a reprodução.
-
 \SetKwFunction{random}{random}
 \SetKwFunction{selectParents}{selectParents}
 \SetKwFunction{crossover}{crossover}
@@ -54,7 +50,8 @@ Este processo é repetido até que pares suficientes de pais sejam selecionados 
     $population \gets \random{populationSize, model.numParams}$\;
     \For{$generation \gets 0$ \KwTo $numGenerations$}{
         $parents \gets \selectParents{population}$\;
-        $children \gets \mutate{\crossover{parents}}$\;
+        $children \gets \crossover{parents}$\;
+        $children \gets \mutate{children}$\;
         $population \gets children$\;
         $scores \gets \calculateScores{population}$\;
         $(maxScore, maxScoreIdx) \gets \max{scores}$\;
@@ -91,10 +88,9 @@ def select_parents(self, population: Population) -> Population:
     \label{alg:select_parents}
 \end{listing}
 
-No caso do operador de cruzamento, definido em Alg.~\ref{alg:crossover}, é utilizada a técnica de cruzamento num único ponto, ou \qq{single point crossover}.
-Nessa técnica, um ponto de cruzamento é escolhido aleatoriamente e o material genético é trocado entre os pais até esse ponto, resultando nos filhos.
-A probabilidade de ocorrer cruzamento é determinada pelo valor de \texttt{crossover\_rate}.
-Esse processo é repetido para cada par de pais, gerando o par correspondente de filhos.
+O operador de seleção, definido em Alg.~\ref{alg:select_parents}, utiliza um processo chamado seleção proporcional à aptidão (ou seleção por roleta) para escolher os pais da próxima geração, no qual é atribuída uma probabilidade de seleção a cada indivíduo com base na sua aptidão relativa.
+Quanto maior a aptidão de um indivíduo, maior a probabilidade de ele ser selecionado.
+Este processo é repetido até que pares suficientes de pais sejam selecionados para a reprodução.
 
 \begin{listing}[!ht]
     \begin{minted}{python}
@@ -113,9 +109,10 @@ def crossover(self, parents1: Population, parents2: Population):
     \label{alg:crossover}
 \end{listing}
 
-
-Por fim, o operador de mutação, definido em Alg.~\ref{alg:mutate}, atua sobre a população de filhos, onde alguns neurónios são desativados (definidos como 0), e alguns parâmetros sofrem mutação adicionando valores aleatórios extraídos de uma distribuição normal com $\mu=0$ e $\sigma=0.1$.
-Isso introduz variabilidade e diversidade genética na população de filhos.
+No caso do operador de cruzamento, definido em Alg.~\ref{alg:crossover}, é utilizada a técnica de cruzamento num único ponto, ou \qq{single point crossover}.
+Nessa técnica, um ponto de cruzamento é escolhido aleatoriamente e o material genético é trocado entre os pais até esse ponto, resultando nos filhos.
+A probabilidade de ocorrer cruzamento é determinada pelo valor de \texttt{crossover\_rate}.
+Esse processo é repetido para cada par de pais, gerando o par correspondente de filhos.
 
 \begin{listing}[!ht]
     \begin{minted}{python}
@@ -132,3 +129,6 @@ def mutate(self, children: Population) -> Population:
     \caption{Operador de mutação}
     \label{alg:mutate}
 \end{listing}
+
+Por fim, o operador de mutação, definido em Alg.~\ref{alg:mutate}, atua sobre a população de filhos, onde alguns neurónios são desativados (definidos como 0), e alguns parâmetros sofrem mutação adicionando valores aleatórios extraídos de uma distribuição normal com $\mu=0$ e $\sigma=0.1$.
+Isso introduz variabilidade e diversidade genética na população de filhos.
