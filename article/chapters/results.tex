@@ -54,15 +54,15 @@ Foram definidas as funções \texttt{load\_params} (Alg.~\ref{alg:load_params}),
     \centering
     \begin{tabular}{ccc}
         \hline
-        \textbf{Parâmetro} & \textbf{GeneticAlgorithm} & \textbf{PyGAD} \\
+        \textbf{Parâmetro}                  & \textbf{GeneticAlgorithm} & \textbf{PyGAD} \\
         \hline
-        Tamanho da população & 30 & 10 \\
-        Número de gerações & 600 & 200 \\
-        Intervalo de gerações & 50 & - \\
-        Probabilidade de mutação & 0.05 & - \\
-        Probabilidade de \textit{crossover} & 0.95 & - \\
-        Probabilidade de desconexão & $10^{-4}$ & - \\
-        Elitismo & \texttt{True} & \texttt{True} \\
+        Tamanho da população                & 30                        & 10             \\
+        Número de gerações                  & 600                       & 200            \\
+        Intervalo de gerações               & 50                        & -              \\
+        Probabilidade de mutação            & 0.05                      & -              \\
+        Probabilidade de \textit{crossover} & 0.95                      & -              \\
+        Probabilidade de desconexão         & $10^{-4}$                 & -              \\
+        Elitismo                            & \texttt{True}             & \texttt{True}  \\
         \hline
     \end{tabular}
     \caption{Valores dos parâmetros do algoritmo genético}
@@ -78,7 +78,10 @@ Por fim, o algoritmo genético foi instanciado com os parâmetros apresentados n
     \label{fig:ga_fitness}
 \end{figure}
 
-O algoritmo genético implementado com a classe \texttt{GeneticAlgorithm} foi executado durante 600 gerações, com uma população de 30 soluções. A incorporação de elitismo provou ser eficaz, permitindo uma evolução gradual da aptidão, como é possível verificar na Fig.~\ref{fig:ga_fitness}. Inicialmente, a aptidão apresenta um aumento prolongado, ainda que esse acelere por volta das 200 gerações. Esse aumento torna-se menos evidente após 400 gerações, acabando por estagnar, sensivelmente, a partir de 500 iterações.
+O algoritmo genético implementado com a classe \texttt{GeneticAlgorithm} foi executado durante 600 gerações, com uma população de 30 soluções.
+A incorporação de elitismo provou ser eficaz, permitindo uma evolução gradual da aptidão, como é possível verificar na Fig.~\ref{fig:ga_fitness}.
+Inicialmente, a aptidão apresenta um aumento prolongado, ainda que esse acelere por volta das 200 gerações.
+Esse aumento torna-se menos evidente após 400 gerações, acabando por estagnar, sensivelmente, a partir de 500 iterações.
 
 \begin{figure}[htbp]
     \centering
@@ -87,18 +90,19 @@ O algoritmo genético implementado com a classe \texttt{GeneticAlgorithm} foi ex
     \label{fig:pygad_fitness}
 \end{figure}
 
-No caso do algoritmo genético implementado com a biblioteca PyGAD, este foi executado durante 200 gerações, com uma população fixa de 10 indivíduos, ou seja, apenas $1/3$ do algoritmo original. Dado tratar-se de uma biblioteca altamente otimizada, este foi capaz de atingir uma aptidão semelhante ao anterior em apenas 115 gerações, ainda que tenha estagnado no final da sua execução, como é evidente pela Fig.~\ref{fig:pygad_fitness}.
+No caso do algoritmo genético implementado com a biblioteca PyGAD, este foi executado durante 200 gerações, com uma população fixa de 10 indivíduos, ou seja, apenas $1/3$ do algoritmo original.
+Dado tratar-se de uma biblioteca altamente otimizada, este foi capaz de atingir uma aptidão semelhante ao anterior em apenas 115 gerações, ainda que tenha estagnado no final da sua execução, como é evidente pela Fig.~\ref{fig:pygad_fitness}.
 
 \begin{table}[htbp]
     \centering
-    \begin{tabular}{ccc} 
+    \begin{tabular}{ccc}
         \hline
-        \textbf{Métricas} & \textbf{GeneticAlgoritm}  & \textbf{PyGAD} \\ \hline
-        Melhor aptidão & 24.1857 & 26.8775 \\
-        Perda de treino & 0.0414 & 0.0372 \\
-        Acurácia de treino & 98.52\% & 98.52\% \\
-        Perda de teste & 0.0112 & 0.0120 \\
-        Acurácia de teste & 100\% & 100\% \\ \hline
+        \textbf{Métricas}  & \textbf{GeneticAlgoritm} & \textbf{PyGAD} \\ \hline
+        Melhor aptidão     & 24.1857                  & 26.8775        \\
+        Perda de treino    & 0.0414                   & 0.0372         \\
+        Acurácia de treino & 98.52\%                  & 98.52\%        \\
+        Perda de teste     & 0.0112                   & 0.0120         \\
+        Acurácia de teste  & 100\%                    & 100\%          \\ \hline
     \end{tabular}
     \caption{Métricas dos algoritmos}
     \label{tab:metrics}

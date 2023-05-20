@@ -17,7 +17,6 @@
 \usepackage{textcmds}
 \usepackage{neuralnetwork}
 \usepackage{tikz}
-\usepackage[T1]{fontenc}
 
 \renewcommand\listingscaption{Excerto de código}
 \renewcommand\listoflistingscaption{Lista de Excertos de Código}
@@ -52,25 +51,28 @@
         \includegraphics[width=8cm]{images/utad}
         \label{fig:utad_logo}
     \end{figure}
-    
+
     \maketitle
-    
+
     \begin{abstract}
 
         Neste trabalho, será desenvolvido um algoritmo genético, utilizando a linguagem de programação Python, para otimizar os parâmetros de uma rede neuronal artificial.
         Pretende-se entender melhor a eficácia e utilidade dos algoritmos genéticos na otimização de modelos de aprendizagem de máquina.
-        Para analisar o desempenho do algoritmo, será utilizado um modelo capaz de classificar espécies de flores da base de dados IRIS, e os resultados serão comparados com uma implementação já existente em Python, recorrendo à biblioteca PyGAD.
+        Para analisar o desempenho do algoritmo, será utilizado um modelo capaz de classificar espécies de flores da base de dados IRIS, e os resultados serão comparados com uma implementação já existente em Python, recorrendo à biblioteca PyGAD\@.
 
-        Através deste estudo, espera-se demonstrar a importância e desafios da otimização de parâmetros de redes neuronais utilizando algoritmos genéticos. A complexidade e o vasto espaço de soluções envolvidos na pesquisa pelos melhores conjuntos de parâmetros destacam a necessidade de abordagens eficazes para melhorar o desempenho e adaptabilidade das redes neuronais em tarefas de classificação e reconhecimento de padrões. O trabalho realizado servirá como base para futuras investigações e melhorias nessa área, visando o desenvolvimento de modelos mais refinados e eficazes, capazes de otimizar os resultados em diversas aplicações, contribuindo para avanços significativos no campo da inteligência artificial e da aprendizagem de máquina.
+        Através deste estudo, espera-se demonstrar a importância e desafios da otimização de parâmetros de redes neuronais utilizando algoritmos genéticos.
+        A complexidade e o vasto espaço de soluções envolvidos na pesquisa pelos melhores conjuntos de parâmetros destacam a necessidade de abordagens eficazes para melhorar o desempenho e adaptabilidade das redes neuronais em tarefas de classificação e reconhecimento de padrões.
+        O trabalho realizado servirá como base para futuras investigações e melhorias nessa área, visando o desenvolvimento de modelos mais refinados e eficazes, capazes de otimizar os resultados em diversas aplicações, contribuindo para avanços significativos no campo da inteligência artificial e da aprendizagem de máquina.
 
         \keywords{algoritmos de otimização, otimização de parâmetros, redes neuronais, algoritmos genéticos, operadores genéticos, espaço de pesquisa, classificação, reconhecimento de padrões, aprendizagem de máquina}
 
     \end{abstract}
-    
+
     \tableofcontents
     \listoffigures
     \listoftables
     \listoflistings
+
 
     \chapter{Introdução}\label{ch:introduction}
     \input{chapters/introduction}
@@ -107,17 +109,24 @@
 
 
     \chapter{Conclusões}\label{ch:conclusoes}
-    Neste trabalho, desenvolveu-se um algoritmo genético na linguagem de programação Python, para otimizar os parâmetros de uma rede neuronal artificial. A rede neuronal era uma Rede Neuronal Totalmente Conectada, capaz de classificar as três espécies de flores do género Iris, que compõem o `dataset' IRIS~\cite{Fisher1988}.
+    Neste trabalho, desenvolveu-se um algoritmo genético na linguagem de programação Python, para otimizar os parâmetros de uma rede neuronal artificial.
+    A rede neuronal era uma Rede Neuronal Totalmente Conectada, capaz de classificar as três espécies de flores do género Iris, que compõem o dataset IRIS~\cite{Fisher1988}.
 
-    O algoritmo GeneticAlgorithm, desenvolvido de raiz, mostrou um desempenho consistente ao longo das 600 gerações. A incorporação do elitismo contribuiu para um aumento gradual na aptidão durante as primeiras centenas de gerações, resultando num modelo bem ajustado. No entanto, observou-se uma estagnação da aptidão após aproximadamente 500 iterações, indicando que o algoritmo atingiu o seu limite de otimização.
+    O algoritmo GeneticAlgorithm, desenvolvido de raiz, mostrou um desempenho consistente ao longo das 600 gerações.
+    A incorporação do elitismo contribuiu para um aumento gradual na aptidão durante as primeiras centenas de gerações, resultando num modelo bem ajustado.
+    No entanto, observou-se uma estagnação da aptidão após aproximadamente 500 iterações, indicando que o algoritmo atingiu o seu limite de otimização.
 
-    Por outro lado, a biblioteca PyGAD, dada a sua alta otimização, foi capaz de alcançar uma aptidão semelhante em apenas 115 gerações. Embora também tenha mostrado uma estagnação no final da execução, o desempenho geral foi notável considerando o número reduzido de gerações e a menor população.
+    Por outro lado, a biblioteca PyGAD, dada a sua alta otimização, conseguiu alcançar uma aptidão semelhante em apenas 115 gerações.
+    Embora também tenha mostrado uma estagnação no final da execução, o desempenho geral foi notável considerando o número reduzido de gerações e a menor população.
 
     Apesar da ligeira diferença na aptidão final, ambos os algoritmos apresentaram resultados impressionantes na tarefa de classificação, tendo alcançado altas taxas de acurácia quer nos dados de treino, quer nos dados de teste, com uma exatidão de 98.52\% e 100\%, respetivamente.
-    
-    Como trabalho futuro, seria relevante explorar diferentes operadores genéticos, como seleção, cruzamento e mutação. Diferentes estratégias de seleção, como a seleção por torneio, pode permitir uma exploração mais eficiente do espaço de pesquisa. Além disso, a utilização de diferentes técnicas de cruzamento, como cruzamento de múltiplos pontos ou cruzamento uniforme, e técnicas de mutação mais sofisticadas, podem fornecer uma maior diversidade genética e, potencialmente, melhorar a busca por soluções ótimas.
 
-    Em conclusão, ambos os algoritmos genéticos mostraram-se eficientes na otimização dos parâmetros da rede neuronal para a tarefa de classificação especificada. Embora apresentassem diferenças em termos do desempenho e número de gerações necessárias para atingir a aptidão final, ambos alcançaram resultados altamente precisos na classificação, o que demonstra a relevância e utilidade dos algoritmos genéticos neste tipo de aplicações.
+    Como trabalho futuro, seria relevante explorar diferentes operadores genéticos, como seleção, cruzamento e mutação.
+    Diferentes estratégias de seleção, como a seleção por torneio, pode permitir uma exploração mais eficiente do espaço de pesquisa.
+    Além disso, a utilização de diferentes técnicas de cruzamento, como cruzamento de múltiplos pontos ou cruzamento uniforme, e técnicas de mutação mais sofisticadas, podem fornecer uma maior diversidade genética e, potencialmente, melhorar a busca por soluções ótimas.
+
+    Em suma, ambos os algoritmos genéticos mostraram-se eficientes na otimização dos parâmetros da rede neuronal para a tarefa de classificação especificada.
+    Embora apresentassem diferenças em termos do desempenho e número de gerações necessárias para atingir a aptidão final, ambos alcançaram resultados altamente precisos na classificação, demonstrando a relevância e utilidade dos algoritmos genéticos neste tipo de aplicações.
 
     \appendix
 
