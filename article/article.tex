@@ -52,25 +52,28 @@
         \includegraphics[width=8cm]{images/utad}
         \label{fig:utad_logo}
     \end{figure}
+    
     \maketitle
+    
     \begin{abstract}
 
-        Neste trabalho, será desenvolvido um sistema computacional baseado em agentes racionais, utilizando a ferramenta NetLogo, para simular a propagação de incêndios florestais, considerando diversos fatores ambientais.
-        Pretende-se entender melhor o comportamento do fogo em diferentes situações e determinar as melhores estratégias de combate e prevenção.
-        Para alcançar esse objetivo, serão simulados quatro cenários distintos, variando a inclinação do terreno e a direção e intensidade do vento.
+        Neste trabalho, será desenvolvido um algoritmo genético, utilizando a linguagem de programação Python, para otimizar os parâmetros de uma rede neuronal artificial.
+        Pretende-se entender melhor a eficácia e utilidade dos algoritmos genéticos na otimização de modelos de aprendizagem de máquina.
+        Para analisar o desempenho do algoritmo, será utilizado um modelo capaz de classificar espécies de flores da base de dados IRIS, e os resultados serão comparados com uma implementação já existente em Python, recorrendo à biblioteca PyGAD.
 
-        Através deste estudo, espera-se demonstrar a importância e complexidade da simulação de incêndios florestais e destacar o valor das abordagens baseadas em agentes para aprofundar a compreensão das interações e comportamentos envolvidos.
-        O trabalho servirá como base para futuras investigações e melhorias no campo da prevenção e combate a incêndios florestais, procurando modelos mais refinados e eficazes que reduzam o impacto dos incêndios florestais nas pessoas e nos ecossistemas.
+        Através deste estudo, espera-se demonstrar a importância e desafios da otimização de parâmetros de redes neuronais utilizando algoritmos genéticos. A complexidade e o vasto espaço de soluções envolvidos na pesquisa pelos melhores conjuntos de parâmetros destacam a necessidade de abordagens eficazes para melhorar o desempenho e adaptabilidade das redes neuronais em tarefas de classificação e reconhecimento de padrões. O trabalho realizado servirá como base para futuras investigações e melhorias nessa área, visando o desenvolvimento de modelos mais refinados e eficazes, capazes de otimizar os resultados em diversas aplicações, contribuindo para avanços significativos no campo da inteligência artificial e da aprendizagem de máquina.
 
-        \keywords{simulação de incêndios florestais, agentes racionais, modelos baseados em agentes, NetLogo, fatores ambientais, topografia, direção e intensidade do vento, prevenção e combate a incêndios}
+        \keywords{algoritmos de otimização, otimização de parâmetros, redes neuronais, algoritmos genéticos, operadores genéticos, espaço de pesquisa, classificação, reconhecimento de padrões, aprendizagem de máquina}
 
     \end{abstract}
+    
     \tableofcontents
     \listoffigures
     \listoftables
+    \listoflistings
 
     \chapter{Introdução}\label{ch:introduction}
-    \input{introduction}
+    \input{chapters/introduction}
 
 
     \chapter{Problema}\label{ch:problem}
@@ -96,32 +99,25 @@
 
 
     \chapter{Metodologia}\label{ch:methodology}
-    \input{methodology}
+    \input{chapters/methodology}
 
 
     \chapter{Resultados}\label{ch:results}
-    \input{results}
+    \input{chapters/results}
 
 
     \chapter{Conclusões}\label{ch:conclusoes}
-    Neste trabalho, desenvolveu-se um sistema computacional com agentes racionais utilizando a ferramenta NetLogo, para simular a propagação de um incêndio florestal considerando diferentes fatores ambientais.
-    Foram analisados quatro cenários distintos, variando a inclinação do terreno e a direção do vento.
+    Neste trabalho, desenvolveu-se um algoritmo genético na linguagem de programação Python, para otimizar os parâmetros de uma rede neuronal artificial. A rede neuronal era uma Rede Neuronal Totalmente Conectada, capaz de classificar as três espécies de flores do género Iris, que compõem o `dataset' IRIS~\cite{Fisher1988}.
 
-    Os resultados obtidos não foram conforme o esperado, uma vez que os cenários com vento a favor e contra a inclinação apresentaram valores contraditórios.
-    As nossas expectativas eram de que a propagação do incêndio seria maior nos casos em que o vento estivesse a favor da inclinação, e menor nos casos em que o vento estivesse contra a inclinação.
-    No entanto, o que se observou foi que a percentagem da floresta ardida e outros parâmetros analisados não seguiram essa lógica.
+    O algoritmo GeneticAlgorithm, desenvolvido de raiz, mostrou um desempenho consistente ao longo das 600 gerações. A incorporação do elitismo contribuiu para um aumento gradual na aptidão durante as primeiras centenas de gerações, resultando num modelo bem ajustado. No entanto, observou-se uma estagnação da aptidão após aproximadamente 500 iterações, indicando que o algoritmo atingiu o seu limite de otimização.
 
-    Uma possível explicação para os resultados contraditórios pode ser a simplificação de alguns elementos do modelo, bem como a aleatoriedade de fatores como a geração de fagulhas.
-    Outro fator que poderá ter contribuído para essa contradição é a alta probabilidade de propagação utilizada, que pode ter mascarado o efeito esperado da direção do vento e da inclinação do terreno.
+    Por outro lado, a biblioteca PyGAD, dada a sua alta otimização, foi capaz de alcançar uma aptidão semelhante em apenas 115 gerações. Embora também tenha mostrado uma estagnação no final da execução, o desempenho geral foi notável considerando o número reduzido de gerações e a menor população.
 
-    A partir das conclusões deste trabalho, é possível sugerir melhorias no modelo de simulação para investigação futura.
-    Estas melhorias podem incluir a consideração de outros fatores ambientais, como a humidade do ar e do solo, e uma análise mais aprofundada das probabilidades de propagação.
-    Além disso, a realização de mais testes com diferentes configurações de parâmetros pode ajudar a compreender melhor as discrepâncias observadas.
+    Apesar da ligeira diferença na aptidão final, ambos os algoritmos apresentaram resultados impressionantes na tarefa de classificação, tendo alcançado altas taxas de acurácia quer nos dados de treino, quer nos dados de teste, com uma exatidão de 98.52\% e 100\%, respetivamente.
+    
+    Como trabalho futuro, seria relevante explorar diferentes operadores genéticos, como seleção, cruzamento e mutação. Diferentes estratégias de seleção, como a seleção por torneio, pode permitir uma exploração mais eficiente do espaço de pesquisa. Além disso, a utilização de diferentes técnicas de cruzamento, como cruzamento de múltiplos pontos ou cruzamento uniforme, e técnicas de mutação mais sofisticadas, podem fornecer uma maior diversidade genética e, potencialmente, melhorar a busca por soluções ótimas.
 
-    Concluímos que a simulação baseada em agentes é uma ferramenta valiosa no estudo de incêndios florestais, permitindo aos investigadores compreender melhor as complexas interações e comportamentos envolvidos.
-    Essas simulações têm sido usadas para explorar tópicos como estratégias de combate a incêndios, impacto do clima e topografia, e fatores humanos na gestão de incêndios.
-    A melhor compreensão destes fatores pode levar a decisões mais informadas e práticas mais eficazes, tornando a simulação baseada em agentes uma ferramenta essencial na redução do impacto dos incêndios florestais.
-    Embora os resultados não tenham sido os esperados, o trabalho realizado neste projeto servirá como base para futuras investigações e melhorias no campo da prevenção e combate a incêndios florestais.
+    Em conclusão, ambos os algoritmos genéticos mostraram-se eficientes na otimização dos parâmetros da rede neuronal para a tarefa de classificação especificada. Embora apresentassem diferenças em termos do desempenho e número de gerações necessárias para atingir a aptidão final, ambos alcançaram resultados altamente precisos na classificação, o que demonstra a relevância e utilidade dos algoritmos genéticos neste tipo de aplicações.
 
     \appendix
 
