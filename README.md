@@ -1,7 +1,7 @@
 # Genetic Algorithm for Neural Network Weight Optimization
 
 ## Description
-This GitHub repository provides an implementation of a Genetic Algorithm (GA) for finding optimal weights of a Neural Network (NN). The repository includes our own implementation of the GA algorithm as well as an integration with PyGAD, a popular Python library for Genetic Algorithms.
+This GitHub repository provides an implementation of a Genetic Algorithm (GA) for finding optimal weights of a Neural Network (NN). The repository includes our own implementation of the GA algorithm as well as an integration with PyGAD, a popular Python library for Genetic Algorithms. The report can be read at [Neural Network Optimization Using Genetic Algorithms](report.pdf).
 
 ## Key Features
 
